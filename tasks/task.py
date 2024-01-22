@@ -209,7 +209,7 @@ class Task:
         if epoch < self.params.poison_epoch_stop + 1:
             sampled_ids = random.sample(
                 range(self.params.fl_number_of_adversaries, self.params.fl_total_participants),
-                self.params.fl_no_models - 4)
+                self.params.fl_no_models - len(self.adversaries))
         
             sampled_ids.extend(self.adversaries)
         else:
