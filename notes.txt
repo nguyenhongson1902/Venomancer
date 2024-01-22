@@ -1,0 +1,414 @@
+MNIST
+python marksman_conditional_trigger_generation.py --dataset mnist --clsmodel mnist_cnn --path experiments/ --epochs 10 --train-epoch 1 --mode all2one --target_label 1 --epochs_per_external_eval 10 --cls_test_epochs 5 --verbose 2 --batch-size 128 --alpha 0.5 --eps 0.1 --avoid_cls_reinit
+
+input_height=32
+input_width=32
+input_channel=1
+
+CIFAR-10
+. etc/setup_env
+python marksman_conditional_trigger_generation.py --dataset cifar10 --clsmodel vgg11 --path experiments/ --epochs 50 --train-epoch 1 --mode all2one --target_label 0 --epochs_per_external_eval 10 --cls_test_epochs 5 --verbose 2 --batch-size 128 --alpha 0.5 --eps 0.1 --avoid_cls_reinit 2>&1 >experiments/logs/cifar10_trigger_generation.log &	
+
+
+
+
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_fedavg.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_deepsight.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_flame.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_fldetector.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_foolsgold.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_rflbat.txt"
+
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_poisonepochstop20_noniid_simplenet_fedavg.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_poisonepochstop20_noniid_simplenet_deepsight.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_poisonepochstop20_noniid_simplenet_flame.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_poisonepochstop20_noniid_simplenet_fldetector.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_poisonepochstop20_noniid_simplenet_foolsgold.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_poisonepochstop20_noniid_simplenet_rflbat.txt"
+
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_targetsamples_poisonepochstop100_noniid_simplenet_fedavg.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_targetsamples_poisonepochstop100_noniid_simplenet_deepsight.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_targetsamples_poisonepochstop100_noniid_simplenet_flame.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_targetsamples_poisonepochstop100_noniid_simplenet_fldetector.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_targetsamples_poisonepochstop100_noniid_simplenet_foolsgold.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_targetsamples_poisonepochstop100_noniid_simplenet_rflbat.txt"
+
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_noniid_simplenet_fixedfrequency5_fedavg.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_noniid_simplenet_fixedfrequency5_deepsight.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_noniid_simplenet_fixedfrequency5_flame.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_noniid_simplenet_fixedfrequency5_fldetector.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_noniid_simplenet_fixedfrequency5_foolsgold.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_noniid_simplenet_fixedfrequency5_rflbat.txt"
+
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_fixedfrequency5_fedavg.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_fixedfrequency5_deepsight.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_fixedfrequency5_flame.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_fixedfrequency5_fldetector.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_fixedfrequency5_foolsgold.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants20_targetsamples_noniid_simplenet_fixedfrequency5_rflbat.txt"
+
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_poisonepochstop20_noniid_simplenet_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp2/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp2/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_poisonepochstop20_noniid_simplenet_fixedfrequency1_fedavg_verified.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp2/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp2/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_poisonepochstop20_noniid_simplenet_fixedfrequency1_fedavg_verified.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_poisonepochstop20_noniid_simplenet_fixedfrequency1_fedavg.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_poisonepochstop20_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_poisonepochstop100_noniid_simplenet_fixedfrequency10_fedavg.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_poisonepochstop100_noniid_simplenet_fixedfrequency10_fedavg.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_poisonepochstop100_noniid_simplenet_fixedfrequency10_fedavg.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_poisonepochstop100_noniid_simplenet_fixedfrequency10_fedavg.txt"
+python training.py --name mnist --params configs/mnist_fed.yaml > "logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_poisonepochstop100_noniid_simplenet_fixedfrequency10_fedavg.txt"
+
+
+Experiment 1: 1-5 / 5 adversaries, 100 poison epochs, fixed frequency=10, non-iid, fl_poison_epochs 5 => Wrong because of clip_image
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp1/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp1/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_poisonepochstop100_noniid_resnet18_fixedfrequency1_fedavg.txt" # actually fixed_frequency=10 in this experiment
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp1/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp1/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_poisonepochstop100_noniid_resnet18_fixedfrequency1_fedavg.txt" # actually fixed_frequency=10 in this experiment
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp1/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp1/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_poisonepochstop100_noniid_resnet18_fixedfrequency1_fedavg.txt" # actually fixed_frequency=10 in this experiment
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp1/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp1/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_poisonepochstop100_noniid_resnet18_fixedfrequency1_fedavg.txt" # actually fixed_frequency=10 in this experiment
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp1/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp1/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_poisonepochstop100_noniid_resnet18_fixedfrequency1_fedavg.txt" # actually fixed_frequency=10 in this experiment
+
+Experiment 2: Verifying experiments with 2-3 / 5 adversaries, non-iid, fixed_frequency 1, fl_poison_epochs 5 => True
+
+Experiment 3: 1-5 / 5 adversaries, 100 poison epochs, fixed frequency=1, non-iid, fl_poison_epochs 5 => Wrong because of clip_image
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp3/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp3/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_poisonepochstop20_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp3/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp3/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_poisonepochstop20_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp3/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp3/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_poisonepochstop20_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp3/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp3/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_poisonepochstop20_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp3/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp3/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_poisonepochstop20_noniid_resnet18_fixedfrequency1_fedavg.txt"
+
+Experiment 4: 1-5 / 5 adversaries, poison epoch stop 20, fixed frequency=1, non-iid, fl_poison_epochs 10, epochs 100
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp4/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp4/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_poisonepochstop20_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp4/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp4/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_poisonepochstop20_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp4/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp4/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_poisonepochstop20_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp4/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp4/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_poisonepochstop20_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp4/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp4/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_poisonepochstop20_noniid_resnet18_fixedfrequency1_fedavg.txt"
+
+Experiment 5: 1-5 / 5 adversaries, poison epoch stop 200, fixed frequency=1, non-iid, fl_poison_epochs 10, epochs 1000
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp5/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp5/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_poisonepochstop200_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp5/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp5/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_poisonepochstop200_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp5/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp5/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_poisonepochstop200_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp5/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp5/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_poisonepochstop200_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp5/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp5/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_poisonepochstop200_noniid_resnet18_fixedfrequency1_fedavg.txt"
+
+Experiment 6: 1-5 / 5 adversaries, poison epoch stop 200, fixed frequency=1, non-iid, fl_poison_epochs 10, epochs 1000, normal training
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp6/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp6/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp6/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp6/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp6/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp6/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp6/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp6/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp6/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp6/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+
+Experiment 7: 1-5 / 5 adversaries, fixed frequency=1, non-iid, fl_poison_epochs 10, epochs 1000, lr 0.1, normal training
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp7/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp7/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_lr0.1_fedavg.txt"
+
+Experiment 8: 1-5 / 5 adversaries, fixed frequency=1, non-iid, fl_poison_epochs 10, epochs 1000, lr 0.01, normal training
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp8/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp8/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_lr0.01_fedavg.txt"
+
+Experiment 9: 1-5 / 5 adversaries, fixed frequency=1, non-iid, fl_poison_epochs 10, epochs 1000, lr 0.1, clsmodel's optimizer Adam, normal training
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp9/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp9/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_lr0.1_adam_fedavg.txt"
+
+Experiment 10: 1-5 / 5 adversaries, fixed frequency=1, non-iid, fl_poison_epochs 10, epochs 1000, lr 0.1, clsmodel's optimizer SGD, dirichlet alpha 0.5, normal training
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp10/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp10/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_lr0.1_adam_fedavg.txt"
+
+Experiment 11: 1-5 / 5 adversaries, fixed frequency=1, non-iid, fl_poison_epochs 10, epochs 1000, lr 0.0001, clsmodel's optimizer SGD, dirichlet alpha 0.9, normal training
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp11/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp11/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_lr0.1_adam_fedavg.txt"
+
+Experiment 12 (Oct.31_06.36.35): 1 clients, fixed frequency=1, non-iid, fl_poison_epochs 10, epochs 1000, lr 0.01, clsmodel's optimizer SGD, dirichlet alpha 0.9, normal training
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp12/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp12/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_lr0.01_adam_fedavg.txt"
+
+Experiment 13: 1 clients, fixed frequency=1, non-iid, fl_poison_epochs 10, epochs 1000, lr 0.01, clsmodel's optimizer SGD, dirichlet alpha 0.9, normal training
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp13/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp13/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_lr0.01_adam_fedavg.txt"
+
+Experiment 14 (exp12, Oct.31_08.36.33, Oct.31_08.37.01, Oct.31_08.37.22, Oct.31_08.38.03, Oct.31_08.38.31): 1-5 / 5 adversaries, poison epoch stop 20, fixed frequency=1, non-iid 0.9, fl_poison_epochs 10, epochs 100, lr 0.01, marksman
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp12/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp12/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp12/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp12/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp12/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp12/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp12/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp12/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp12/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp12/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+
+Experiment 15: 1-5 / 5 adversaries, poison epoch 100, non-iid 0.9, fl_poison_epochs 10, epochs 100, fixed frequency 10, lr 0.01, marksman
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp15/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp15/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency10_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp15/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp15/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency10_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp15/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp15/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency10_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp15/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp15/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency10_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp15/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp15/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency10_fedavg.txt"
+
+Experiment 16 (Failed): Apply defenses, 1-5 / 5 adversaries, poison epoch 100, fixed frequency=1, non-iid 0.9, fl_poison_epochs 10, epochs 100, fixed frequency 10, lr 0.1, marksman
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp16/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp16/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp16/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp16/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_deepsight.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp16/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp16/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_flame.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp16/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp16/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fldetector.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp16/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp16/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_foolsgold.txt"
+mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp16/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp16/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_rflbat.txt"
+
+Experiment 17: 1-5 / 5 adversaries, poison epoch stop 200, fixed frequency=1, non-iid 0.9, fl_poison_epochs 10, epochs 1000, lr 0.1, marksman
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp17/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp17/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt" # This is actually 1 adversaries
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp17/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp17/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt" # This is actually 2 adversaries
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp17/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp17/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp17/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp17/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp17/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp17/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+
+Experiment 18 (failed): 1-5 / 5 adversaries, poison epoch stop 1000, fixed frequency=10, non-iid 0.9, fl_poison_epochs 10, epochs 1000, fixed frequency 10, lr 0.1, marksman
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp18/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp18/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency10_fedavg.txt" # This is actually 1 adversaries
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp18/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp18/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency10_fedavg.txt" # This is actually 2 adversaries
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp18/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp18/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency10_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp18/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp18/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency10_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp18/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp18/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency10_fedavg.txt"
+
+Experiment 19 (failed): 1-5 / 5 adversaries, poison epoch stop 1000, fixed frequency 1, non-iid 0.9, fl_poison_epochs 10, epochs 1000, lr 0.1, marksman
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp19/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp19/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp19/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp19/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp19/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp19/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp19/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp19/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp19/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp19/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+
+Experiment 20 (DEBUG): 1-5 / 5 adversaries, poison epoch stop 1000, fixed frequency 1, non-iid 0.9, fl_poison_epochs 10, epochs 1000, lr 0.1, fedavg, marksman
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp20/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp20/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries1_alpha0.5_targetlabel[1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp20/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp20/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries2_alpha0.5_targetlabel[1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp20/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp20/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries3_alpha0.5_targetlabel[1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp20/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp20/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+export CUDA_VISIBLE_DEVICES=1 && mydate=$(date "+%b.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp20/"$mydate && python training.py --name cifar10 --params configs/cifar10marksman_fed.yaml > $(pwd)"/experiments/exp20/"$mydate"/logs_all2one_poisonepochs5_unet_adversaries5_alpha0.5_targetlabel[1,1,1,1,1]_participants5_normaltraining_noniid_resnet18_fixedfrequency1_fedavg.txt"
+
+Experiment 21 (DEBUG): MNIST, 4 / 200 adversaries, poison epoch stop 1000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 10, epochs 1000, lr 0.001, fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp21/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp21/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 22 (Pending): MNIST, 4 / 200 adversaries, poison epoch stop 1000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 10, epochs 1000, lr 0.001, fedavg, marksman, only_target_examples True
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp22/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp22/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 23 (DEBUG): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 1000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 1000, lr 0.001, fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp23/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp23/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 23 (DEBUG): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 1000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 1000, lr 0.01, fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp23/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp23/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 23 (DEBUG): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 1000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 10, epochs 1000, lr 0.01, fedavg, marksman, atk only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp23/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp23/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 23 (DEBUG): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 1000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 10, epochs 1000, lr 0.001, fedavg, marksman, only_target_examples True
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp23/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp23/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 23 (DEBUG, train longer): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.001, fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp23/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp23/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 23 (DEBUG, train longer): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.01, fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp23/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp23/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 23 (DEBUG, train longer): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 10, epochs 10000, lr 0.01, fedavg, marksman, atk only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp23/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp23/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 23 (DEBUG, train longer): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 10, epochs 10000, lr 0.001, fedavg, marksman, only_target_examples True
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp23/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp23/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 23 (DEBUG, train longer): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 10, epochs 10000, lr 0.01, fedavg, marksman, only_target_examples True
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp23/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp23/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 23 (DEBUG, train longer): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.01, fedavg, marksman, only_target_examples True
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp23/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp23/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 24 (DEBUG, train atkmodel on poison_loader, train clsmodel on train_loader, FAILED): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.01, fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp24/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp24/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 25 (DEBUG, train atkmodel on poison_loader, train clsmodel on train_loader): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 200, epochs 10000, lr 0.01, fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp25/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp25/"$mydate"/logs_all2one_poisonepochs1000_unet_adversaries4_alpha0.5_targetlabel[1,1,1,1]_participants200_normaltraining_noniid_simplenet_fixedfrequency1_fedavg.txt"
+
+Experiment 26 (DEBUG, train atkmodel on poison_loader, train clsmodel on train_loader): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.01, fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp26/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp26/"$mydate"/logs.txt"
+
+Experiment 26 (DEBUG, train atkmodel on poison_loader, train clsmodel on train_loader): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.001, fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp26/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml > $(pwd)"/experiments/exp26/"$mydate"/logs.txt"
+
+Experiment 27 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 1, epochs 10000, lr 0.01, fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp27/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp27/"$mydate"/logs.txt"
+
+Experiment 28 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.01, alpha 0.7 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp28/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp28/"$mydate"/logs.txt"
+
+Experiment 29 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, change lr): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.001, alpha 0.5 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp29/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp29/"$mydate"/logs.txt"
+
+Experiment 30 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, change lr): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.002, alpha 0.5 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp30/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp30/"$mydate"/logs.txt"
+
+Experiment 31 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, change lr): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.004, alpha 0.5 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp31/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp31/"$mydate"/logs.txt"
+
+Experiment 32 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, change lr): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.006, alpha 0.5 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp32/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp32/"$mydate"/logs.txt"
+
+Experiment 33 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, change lr): MNIST, 4 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.008, alpha 0.5 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp33/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp33/"$mydate"/logs.txt"
+
+Experiment 34 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, no malicious): MNIST, 0 / 10 adversaries, total participants 200, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.01, alpha 0.5 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp34/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp34/"$mydate"/logs.txt"
+
+Experiment 34 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, no malicious, scheduler): MNIST, 0 / 10 adversaries, total participants 100, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.1, alpha 0.5 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp34/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp34/"$mydate"/logs.txt"
+
+Experiment 35 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, scheduler): MNIST, 4 / 10 adversaries, total participants 100, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.1, alpha 0.5 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp35/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp35/"$mydate"/logs.txt"
+
+Experiment 36 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, scheduler, pretrained unet): MNIST, 4 / 10 adversaries, total participants 100, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.005, alpha 0.5 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp36/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp36/"$mydate"/logs.txt"
+
+Experiment 37 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, scheduler, pretrained unet): MNIST, 4 / 10 adversaries, total participants 100, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.005, alpha 0.5 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp37/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp37/"$mydate"/logs.txt"
+
+Experiment 38 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, scheduler, pretrained unet): MNIST, 4 / 10 adversaries, total participants 100, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.005, alpha 0 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp38/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp38/"$mydate"/logs.txt"
+
+Experiment 39 (DEBUG, train atkmodel on train_loader, train clsmodel on train_loader, scheduler, pretrained unet): MNIST, 4 / 10 adversaries, total participants 100, poison epoch stop 10000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, epochs 10000, lr 0.005, alpha 0.5 fedavg, marksman, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp39/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp39/"$mydate"/logs.txt"
+
+Experiment 40: MNIST, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.01, fedavg, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp40/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp40/"$mydate"/logs.txt"
+
+Dec 11, 2023
+Experiment 41: MNIST, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.01, fedavg, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp41/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp41/"$mydate"/logs.txt"
+
+Experiment 42: MNIST, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.001, fedavg, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp42/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp42/"$mydate"/logs.txt"
+
+Experiment 45: MNIST, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, only_target_examples False
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp45/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp45/"$mydate"/logs.txt"
+
+Experiment 43: MNIST, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.001, fedavg, only_target_examples False, only injecting noise no updating atkmodel
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp43/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp43/"$mydate"/logs.txt"
+
+Experiment 44: MNIST, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, only_target_examples False, only injecting noise no updating atkmodel
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp44/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp44/"$mydate"/logs.txt"
+
+Experiment 46: MNIST, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.01, fedavg, only_target_examples False, only injecting noise no updating atkmodel
+export CUDA_VISIBLE_DEVICES=0 && mydate=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp46/"$mydate && python training.py --name mnist --params configs/mnist_fed.yaml --time $mydate > $(pwd)"/experiments/exp46/"$mydate"/logs.txt"
+
+Dec 26, 2023
+Experiment 47: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, lr 0.005
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp47/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp47/"$mytime"/logs.txt"
+
+Experiment 48: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1 (verify exp 47), lr 0.005
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp48/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp48/"$mytime"/logs.txt"
+
+Experiment 49: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1.1 (tuning), lr 0.005
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp49/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp49/"$mytime"/logs.txt"
+
+Experiment 50: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.001, fedavg, fl_weight_scale 1
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp50/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp50/"$mytime"/logs.txt"
+
+Experiment 51: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, only use a fixed pattern
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp51/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp51/"$mytime"/logs.txt"
+
+Experiment 52: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp52/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp52/"$mytime"/logs.txt"
+
+Experiment 53: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-1500, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (get a pretrained classifier from exp52)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp53/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp53/"$mytime"/logs.txt"
+
+Experiment 54: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (pick the best atkmodel based on backdoor acc, train atkmodel, clsmodel from scratch)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp54/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp54/"$mytime"/logs.txt"
+
+Experiment 55: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (pick the best atkmodel based on backdoor acc, train atkmodel, clsmodel from scratch, loading state_dict from tgtmodel to atkmodel)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp55/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp55/"$mytime"/logs.txt"
+
+Experiment 56: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (averaging atkmodels, training clsmodel from scratch, loading state_dict from tgtmodel to atkmodel)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp56/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp56/"$mytime"/logs.txt"
+
+Experiment 57: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (pick the best atkmodel based on backdoor acc, train atkmodel, training clsmodel from scratch, loading state_dict from tgtmodel to atkmodel, alpha=0.0)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp57/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp57/"$mytime"/logs.txt"
+
+Experiment 58: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (extends from exp57, load the pretrained classifier from exp57)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp58/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp58/"$mytime"/logs.txt"
+
+Experiment 59: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (extends from exp55, load the pretrained classifier from exp55)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp59/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp59/"$mytime"/logs.txt"
+
+Experiment 60: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (extends from exp56, load the pretrained classifier from exp56, averaging atkmodels)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp60/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp60/"$mytime"/logs.txt"
+
+Experiment 61: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (extended from exp57, pick the best atkmodel based on backdoor acc, train atkmodel from scratch, alpha=0, loaded a pretrained classifier model from exp57)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp61/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp61/"$mytime"/logs.txt"
+
+Experiment 62: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (compare with exp57, pick the best atkmodel based on backdoor acc, train atkmodel from scratch, alpha=0, train with noise and patch)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp62/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp62/"$mytime"/logs.txt"
+
+Experiment 63: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (compare with exp62, pick the best atkmodel based on backdoor acc, train atkmodel from scratch, alpha=0, train with noise and patch, check if retain_graph=True affects the backdoor accuracy)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp63/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp63/"$mytime"/logs.txt"
+
+Experiment 64: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (compare with exp62, pick the best atkmodel based on backdoor acc, train atkmodel from scratch, remove pattern from atkmodel architecture, only train noise, alpha=0)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp64/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp64/"$mytime"/logs.txt"
+
+Experiment 65: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Forgot to set atkmodel.eval(), pick the best atkmodel based on backdoor acc, train like a gan, remove pattern from atkmodel architecture, alpha=0.5)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp65/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp65/"$mytime"/logs.txt"
+
+Experiment 66: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare with exp65, set atkmodel.eval(), pick the best atkmodel based on backdoor acc, train like a gan, remove pattern from atkmodel architecture, alpha=0.5)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp66/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp66/"$mytime"/logs.txt"
+
+Experiment 67: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Pick the best atkmodel based on backdoor acc, tgtoptimizer Adam beta1=0.5, atk_lr=0.0001, local optimizer Adam beta1=0.5, train like a gan, remove pattern from atkmodel architecture, alpha=0.5)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp67/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp67/"$mytime"/logs.txt"
+
+Experiment 68: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare with exp67, pick the best atkmodel based on backdoor acc, tgtoptimizer Adam beta1=0.5, atk_lr=0.0002, local optimizer Adam beta1=0.5, train like a gan, remove pattern from atkmodel architecture, alpha=0.5)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp68/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp68/"$mytime"/logs.txt"
+
+Experiment 69: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare with exp68, pick the best atkmodel based on backdoor acc, tgtoptimizer Adam beta1=0.5, atk_lr=0.0002, local optimizer SGD, train like a gan, remove pattern from atkmodel architecture, alpha=0.5)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp69/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp69/"$mytime"/logs.txt"
+
+Experiment 70: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Multi-target class conditional autoencoder, pick the best atkmodel based on backdoor acc, tgtoptimizer Adam beta1=0.5, atk_lr=0.0002, local optimizer SGD, train like a gan, remove pattern from atkmodel architecture, alpha=0.5)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp70/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp70/"$mytime"/logs.txt"
+
+Experiment 71: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Clean label, autoencoder, pick the best atkmodel based on backdoor acc, tgtoptimizer Adam beta1=0.5, atk_lr=0.0002, local optimizer SGD, train like a gan but clean label, remove pattern from atkmodel architecture, alpha=0.5)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp71/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp71/"$mytime"/logs.txt"
+
+Experiment 72: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Verify implementation correctness of exp70, modify best_tgtoptimizer)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp72/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp72/"$mytime"/logs.txt"
+
+Experiment 73: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare with exp72, previously eps=0.75, now eps=0.01)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp73/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp73/"$mytime"/logs.txt"
+
+Experiment 74: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare with exp72, exp73, previously eps=0.75, now eps=0.05)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp74/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp74/"$mytime"/logs.txt"
+
+Experiment 75: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare with exp72, exp73, exp74, previously eps=0.75, now add exponential decay to eps, initial eps=1.0)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp75/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp75/"$mytime"/logs.txt"
+
+Experiment 76: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare with exp72, exp73, exp74, exp75, previously eps=0.75, now learn eps, initial eps=1.0)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp76/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp76/"$mytime"/logs.txt"
+
+Experiment 77: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare with exp72, exp73, exp74, exp75, exp76, previously eps=0.75, now clamp noise in range -eps, +eps)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp77/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp77/"$mytime"/logs.txt"
+
+Experiment 78: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare with exp72, exp73, exp74, exp75, exp76, exp77, previously eps=0.75, now eps=0.1)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp78/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp78/"$mytime"/logs.txt"
+
+Experiment 79: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare with exp72, exp73, exp74, exp75, exp76, exp77, exp78, previously eps=0.75, now eps=0.1, atkmodel UNet)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp79/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp79/"$mytime"/logs.txt"
+
+Experiment 80: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Settings like exp76, but now learn eps, initial eps=1.0, add durability, lr_eps=1e-6)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp80/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp80/"$mytime"/logs.txt"
+
+Experiment 81: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Same settings with exp80, learn eps, initial eps=1.0, add durability, lr_eps=1e-5)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp81/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp81/"$mytime"/logs.txt"
+
+Experiment 82: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Run again exp81, settings like exp76, but now learn eps, initial eps=1.0, add durability, lr_eps=1e-5)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp82/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp82/"$mytime"/logs.txt"
+
+Experiment 83: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Run again exp81, settings like exp76, but now learn eps, initial eps=1.0, add durability gradmask_ratio=0.3, lr_eps=1e-5)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp83/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp83/"$mytime"/logs.txt"
+
+Experiment 84: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (train like a gan with visual loss, 0.999 0.001)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp84/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp84/"$mytime"/logs.txt"
+
+Experiment 85: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (train like a gan with visual loss, 0.9999 0.0001)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp85/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp85/"$mytime"/logs.txt"
+
+Experiment 86: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Resume from exp85, train like a gan with visual loss, 0.9999 0.0001)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp86/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp86/"$mytime"/logs.txt"
+
+Experiment 87: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare with exp85, train like a gan with visual loss, 0.9999 0.0001, change conditionalautoencoder embedding to 10, 100)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp87/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp87/"$mytime"/logs.txt"
+
+Experiment 88: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (run again exp85 to save atkmodel, train like a gan with visual loss, 0.9999 0.0001)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp88/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp88/"$mytime"/logs.txt"
+
+Experiment 89: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (run again exp85, stop poisoning at round 4000, train like a gan with visual loss, 0.9999 0.0001)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp89/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp89/"$mytime"/logs.txt"
+
+Experiment 90: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare to exp89, stop poisoning at 4000, apply gradmask_ratio 0.95, average grad_list of the latest 10 rounds, check durability)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp90/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp90/"$mytime"/logs.txt"
