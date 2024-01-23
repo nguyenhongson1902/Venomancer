@@ -297,8 +297,10 @@ def aggregate_atkmodels(hlpr, atkmodels_dict, round_participants):
 
 def pick_best_atkmodel(hlpr, atkmodels_dict, round_participants, malicious_local_models):
     all_accs = []
-    adversaries = [user for user in round_participants if user.compromised]
+    # adversaries = [user for user in round_participants if user.compromised] # Bug happens when the attack stops at round 4000, and the adversary is not in the round_participants from 4000 onwards
     
+    adversaries = [user for user in round_participants if user.user_id in atkmodels_dict.keys()] # atkmodels_dict.keys() saved the used-to-be adversaries
+
     for user in adversaries:
         atkmodel = atkmodels_dict[user.user_id][0]
         tgtmodel = atkmodels_dict[user.user_id][1]
