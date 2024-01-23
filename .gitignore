@@ -169,3 +169,10 @@ dataloaders/
 checkpoint/
 experiments/
 tuan/
+debug.ipynb
+get_subset.ipynb
+infer.ipynb
+report_tmp.ipynb
+report.ipynb
+test_gan.ipynb
+test.py
