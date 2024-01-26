@@ -1479,8 +1479,8 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
                 # atkdata, atktarget = make_backdoor_batch(hlpr, data, target, atkmodel, target_transform, multitarget=False)
                 atkdata, atktarget = make_backdoor_batch(hlpr, data, target, atkmodel, target_transform, multitarget=True)
 
-                visual_diff = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
-                # visual_diff = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1))
+                # visual_diff = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
+                visual_diff = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1))
                 # ssim = pytorch_ssim.SSIM(window_size=11)
                 # visual_diff = (ssim(atkdata, data) + 1) / 2
                 # huber_loss = torch.nn.HuberLoss(reduction='none', delta=1.0)
