@@ -1065,9 +1065,13 @@ def train_like_a_gan_with_visual_loss_check_durability(hlpr: Helper, local_epoch
 
             # local_optimizer.zero_grad()
             tgtoptimizer.zero_grad()
-            visual_loss = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
-            (0.999*atkloss + 0.001*visual_loss).mean().backward(retain_graph=True)
+            # visual_loss = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
+            # (0.999*atkloss + 0.001*visual_loss).mean().backward(retain_graph=True)
             # (0.9999*atkloss + 0.0001*visual_loss).mean().backward(retain_graph=True) # exp 85
+
+            visual_loss = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1))
+            (0.1*atkloss + 0.9*visual_loss).mean().backward(retain_graph=True) # quite good with 2 clients
+            
             tgtoptimizer.step() # Only update the weights of the generative model
 
             
