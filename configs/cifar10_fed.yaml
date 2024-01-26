@@ -7,9 +7,9 @@ test_batch_size: 512
 lr: 0.01
 momentum: 0.9
 decay: 0.0005
-epochs: 6000
+epochs: 5000
 poison_epoch: 1
-poison_epoch_stop: 4000
+poison_epoch_stop: 5000
 save_on_epochs: [] # [30, 50, 80, 100, 120, 150, 170, 200]
 optimizer: SGD #SGD
 log_interval: 100
@@ -19,7 +19,7 @@ poisoning_proportion: 1.0
 backdoor_label: 8
 
 resume_model: # model_CIFAR10_01.20_16.40.59_cifar10/model_last.pt.tar
-prefix: /hdd/home/ssd_data/Son/LRBA/
+prefix: /hdd/home/ssd_data/Son/Venomancer/
 
 save_model: True
 log: True
