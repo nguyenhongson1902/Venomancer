@@ -9,7 +9,7 @@ momentum: 0.9
 decay: 0.0005
 epochs: 1000
 poison_epoch: 1
-poison_epoch_stop: 1000
+poison_epoch_stop: 400
 save_on_epochs: [100, 200, 400, 500, 700, 900] # [100, 200, 400, 500, 700, 900]
 optimizer: SGD #SGD
 log_interval: 100
