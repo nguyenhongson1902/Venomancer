@@ -954,7 +954,8 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             # (atkloss + visual_loss).mean().backward(retain_graph=True)
             # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
             # (0.9*atkloss + 0.1*visual_loss).mean().backward(retain_graph=True)
-            (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
+            (0.1*atkloss + 0.9*visual_loss).mean().backward(retain_graph=True) # quite good with 2 clients
+            # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
 
             # ssim = pytorch_ssim.SSIM(window_size=11)
             # visual_loss = (ssim(atkdata, data) + 1) / 2
@@ -1643,7 +1644,7 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
             # target_transform = hlpr.task.target_transform
             target_transform = hlpr.task.sample_negative_labels
             
-            mask_grad_list = get_grad_mask(hlpr, local_model, local_optimizer, user.train_loader, history_grad_list_neurotoxin, ratio=hlpr.params.gradmask_ratio)
+            # mask_grad_list = get_grad_mask(hlpr, local_model, local_optimizer, user.train_loader, history_grad_list_neurotoxin, ratio=hlpr.params.gradmask_ratio)
 
             logger.warning(f"Compromised user: {user.user_id} in run_fl_round function {epoch}")
             for local_epoch in tqdm(range(hlpr.params.fl_poison_epochs)):
