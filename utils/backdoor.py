@@ -438,3 +438,29 @@ def get_grad_mask(hlpr, local_model, local_optimizer, clean_dataloader, history_
 
             k_layer += 1
     return mask_grad_list
+
+def calculate_each_class_accuracy(atk_predictions, atk_targets, class_accuracies, class_counts):
+    """
+        Change class_accuracies (dict) in the function
+        Input:
+            atk_predictions (a sequence). E.g. [2, 4, 3, 1, 0]
+            atk_targets (a sequence). E.g. [5, 9, 3, 1, 0]
+
+    """
+    assert len(atk_predictions) == len(atk_targets)
+    for tar in atk_targets:
+        class_counts[tar.item()] = class_counts.get(tar.item(), 0) + 1
+
+    for pred, tar in zip(atk_predictions, atk_targets):
+        # print("pred.item()", pred.item())
+        # print("tar", tar)
+        if pred.item() == tar.item():
+            class_accuracies[pred.item()] = class_accuracies.get(pred.item(), 0) + 1
+        else:
+            class_accuracies[pred.item()] = class_accuracies.get(pred.item(), 0)
+    
+    # return len(atk_predictions)
+
+    
+
+
