@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from helper import Helper
 from utils.utils import *
-from utils.backdoor import IMAGENET_MIN, IMAGENET_MAX, PostTensorTransform, make_backdoor_batch, aggregate_atkmodels, pick_best_atkmodel, pick_backdoor_label_samples, get_grad_mask, apply_grad_mask
+from utils.backdoor import IMAGENET_MIN, IMAGENET_MAX, PostTensorTransform, make_backdoor_batch, aggregate_atkmodels, pick_best_atkmodel, pick_backdoor_label_samples, get_grad_mask, apply_grad_mask, calculate_each_class_accuracy
 
 from attack_models.autoencoders import MNISTAutoencoder as Autoencoder
 import pytorch_ssim
@@ -1461,6 +1461,10 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
     if atkmodel:
         atkmodel.eval()
     # hlpr.task.reset_metrics()
+    
+    class_accuracies = {}
+    class_counts= {}
+    # count = 0
 
     test_loss, correct = 0.0, 0
     test_backdoor_loss, backdoor_correct = 0.0, 0
@@ -1481,7 +1485,7 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
                 atkdata, atktarget = make_backdoor_batch(hlpr, data, target, atkmodel, target_transform, multitarget=True)
 
                 # visual_diff = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
-                visual_diff = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1))
+                visual_diff = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1)) # cosine distance, range [0; 1]
                 # ssim = pytorch_ssim.SSIM(window_size=11)
                 # visual_diff = (ssim(atkdata, data) + 1) / 2
                 # huber_loss = torch.nn.HuberLoss(reduction='none', delta=1.0)
@@ -1491,10 +1495,23 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
 
                 test_backdoor_loss += hlpr.task.criterion(atkoutput, atktarget).sum().item()
                 atkpred = atkoutput.max(1, keepdim=True)[1]  # get the index of the max log-probability
+
+                calculate_each_class_accuracy(atkpred, atktarget, class_accuracies, class_counts)
+                # count += tmp
+
                 backdoor_correct += atkpred.eq(atktarget.view_as(atkpred)).sum().item()
 
-    test_loss /= len(hlpr.task.test_loader.dataset)
-    acc = correct / len(hlpr.task.test_loader.dataset)
+    test_dataset_size = len(hlpr.task.test_loader.dataset)
+    test_loss /= test_dataset_size
+    acc = correct / test_dataset_size
+
+    # print("count", count)
+    # n_test_examples_each_class = test_dataset_size // 10
+    assert len(class_counts) == 10, "The number of classes is not equal to 10. The problem is due to randomly sampling negative labels"
+    # print("class_accuracies", class_accuracies)
+    # print("class_counts", class_counts)
+    for tar, cor in class_accuracies.items():
+        class_accuracies[tar] = cor / class_counts[tar]
 
     if atkmodel:
         test_backdoor_loss /= len(hlpr.task.test_loader.dataset)
@@ -1502,7 +1519,7 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
 
         print('\nTest [{}]: Clean Loss {:.4f}, Backdoor Loss {:.4f}, Clean Accuracy {:.4f}, Backdoor Accuracy {:.4f}, Visual Difference {:.4f}'.format(epoch,
                 test_loss, test_backdoor_loss, acc, backdoor_acc, visual_diff.mean().item()))
-        return acc, backdoor_acc, test_loss, test_backdoor_loss, visual_diff.mean().item()
+        return acc, backdoor_acc, test_loss, test_backdoor_loss, visual_diff.mean().item(), class_accuracies
     else:
         # raise the error that informs the user atkmodel is None using raise
         raise ValueError("atkmodel is None")
@@ -1723,16 +1740,21 @@ def run(hlpr: Helper):
     
     history_grad_list_neurotoxin = [] # Store grad_list for neurotoxin attack
 
+    class_accuracies_log = {}
     for epoch in range(hlpr.params.start_epoch,
                        hlpr.params.epochs + 1):
         logger.info(f"Communication round {epoch}")
         atkmodel, tgtmodel, tgtoptimizer, local_backdoor_acc = run_fl_round(hlpr, epoch, atkmodels_dict, history_grad_list_neurotoxin)
 
         # atkmodel.eval() # Starts from exp66
-        clean_acc, backdoor_acc, clean_loss, backdoor_loss, visual_diff = test(hlpr, epoch, backdoor=True, atkmodel=tgtmodel) # Use tgtmodel (currently in the eval mode)
+        clean_acc, backdoor_acc, clean_loss, backdoor_loss, visual_diff, class_accuracies = test(hlpr, epoch, backdoor=True, atkmodel=tgtmodel) # Use tgtmodel (currently in the eval mode)
         # clean_acc, backdoor_acc, clean_loss, backdoor_loss = test_with_patch(hlpr, epoch)
         # wandb log acc and backdoor_acc, clean_loss, backdoor_loss
-        wandb.log({"Clean Accuracy": clean_acc, "Backdoor Accuracy": backdoor_acc, "Clean Loss": clean_loss, "Backdoor Loss": backdoor_loss, "Visual Difference": visual_diff})
+        wandb.log({"Clean Accuracy": clean_acc, "Backdoor Accuracy": backdoor_acc, "Clean Loss": clean_loss, "Backdoor Loss": backdoor_loss, "Visual Difference": visual_diff}, step=epoch)
+
+        for target, accuracy in class_accuracies.items():
+            class_accuracies_log[f"Class {target}"] = accuracy
+        wandb.log(class_accuracies_log, step=epoch)
         # hlpr.record_accuracy(metric, test(hlpr, epoch, backdoor=True), epoch)
 
         # hlpr.save_model(hlpr.task.model, epoch, metric)
