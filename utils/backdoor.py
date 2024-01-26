@@ -236,11 +236,13 @@ def make_backdoor_batch(hlpr, data, target, atkmodel, target_transform, multitar
         noise = atkmodel(data, atktarget)
         # noise = torch.clamp(noise, -hlpr.params.eps, hlpr.params.eps)
         atkdata = hlpr.task.clip_image(data + noise)
+        # atkdata = data + noise
     else:
         # noise = atkmodel(data) * hlpr.params.eps
         noise = atkmodel(data)
         # noise = torch.clamp(noise, -hlpr.params.eps, hlpr.params.eps)
         atkdata = hlpr.task.clip_image(data + noise)
+        # atkdata = data + noise
         atktarget = target_transform(target)
 
     return atkdata, atktarget
@@ -296,6 +298,7 @@ def aggregate_atkmodels(hlpr, atkmodels_dict, round_participants):
     return atkmodel_avg, tgtmodel_avg, tgtoptimizer_avg
 
 def pick_best_atkmodel(hlpr, atkmodels_dict, round_participants, malicious_local_models):
+    ### This time tgtmodel is currently in .eval mode after training IBA
     all_accs = []
     # adversaries = [user for user in round_participants if user.compromised] # Bug happens when the attack stops at round 4000, and the adversary is not in the round_participants from 4000 onwards
     
@@ -304,29 +307,32 @@ def pick_best_atkmodel(hlpr, atkmodels_dict, round_participants, malicious_local
     for user in adversaries:
         atkmodel = atkmodels_dict[user.user_id][0]
         tgtmodel = atkmodels_dict[user.user_id][1]
+        ### DEBUG ###
+        # tgtmodel.train()
+        #############
         local_model = malicious_local_models[user.user_id]
 
         backdoor_loss, backdoor_correct = 0.0, 0
-        batch_size = 0
-        with torch.no_grad():
-            for i, data_labels in enumerate(user.train_loader):
-                batch = hlpr.task.get_batch(i, data_labels)
-                
-                data, target = batch.inputs, batch.labels
-                batch_size += data.shape[0]
+        local_dataset_size = 0
+        # with torch.no_grad():
+        for i, data_labels in enumerate(user.train_loader):
+            batch = hlpr.task.get_batch(i, data_labels)
+            
+            data, target = batch.inputs, batch.labels
+            local_dataset_size += data.shape[0]
 
-                # target_transform = hlpr.task.target_transform
-                target_transform = hlpr.task.sample_negative_labels
-                # atkdata, atktarget = make_backdoor_batch(hlpr, data, target, atkmodel, target_transform, multitarget=False)
-                atkdata, atktarget = make_backdoor_batch(hlpr, data, target, atkmodel, target_transform, multitarget=True)
-                atkoutput = local_model(atkdata)
+            # target_transform = hlpr.task.target_transform
+            target_transform = hlpr.task.sample_negative_labels
+            # atkdata, atktarget = make_backdoor_batch(hlpr, data, target, tgtmodel, target_transform, multitarget=False)
+            atkdata, atktarget = make_backdoor_batch(hlpr, data, target, tgtmodel, target_transform, multitarget=True)
+            atkoutput = local_model(atkdata)
 
-                backdoor_loss += hlpr.task.criterion(atkoutput, atktarget).sum().item()
-                atkpred = atkoutput.max(1, keepdim=True)[1]  # get the index of the max log-probability
-                backdoor_correct += atkpred.eq(atktarget.view_as(atkpred)).sum().item()
+            backdoor_loss += hlpr.task.criterion(atkoutput, atktarget).sum().item()
+            atkpred = atkoutput.max(1, keepdim=True)[1]  # get the index of the max log-probability
+            backdoor_correct += atkpred.eq(atktarget.view_as(atkpred)).sum().item()
 
-        backdoor_loss /= batch_size
-        backdoor_acc = backdoor_correct / batch_size
+        backdoor_loss /= local_dataset_size
+        backdoor_acc = backdoor_correct / local_dataset_size
 
         all_accs.append(backdoor_acc)
     
@@ -376,13 +382,13 @@ def get_grad_mask(hlpr, local_model, local_optimizer, clean_dataloader, history_
         bs = batch.batch_size
         data, targets = batch.inputs, batch.labels
 
-        clean_images, clean_targets = copy.deepcopy(data).to(hlpr.params.device), copy.deepcopy(targets).to(hlpr.params.device)
+        clean_images, clean_targets = data.clone(), targets.clone()
         # clean_images, clean_targets = data, targets
-        local_optimizer.zero_grad()
+        # local_optimizer.zero_grad()
         output = local_model(clean_images)
         loss_clean = hlpr.task.criterion(output, clean_targets)
         # loss_clean.backward(retain_graph=True)
-        loss_clean.mean().backward()
+        loss_clean.mean().backward(retain_graph=True)
 
 
     mask_grad_list = []
