@@ -74,9 +74,11 @@ class CIFAR10Task(Task):
         #         self.normalize,
         #     ])
         
-        transform_train = transforms.Compose([transforms.ToTensor(), self.normalize,])
+        # transform_train = transforms.Compose([transforms.ToTensor(), self.normalize,])
+        transform_train = transforms.Compose([transforms.ToTensor(),])
         
-        transform_test = transforms.Compose([transforms.ToTensor(), self.normalize])
+        # transform_test = transforms.Compose([transforms.ToTensor(), self.normalize])
+        transform_test = transforms.Compose([transforms.ToTensor(),])
         self.train_dataset = torchvision.datasets.CIFAR10(
             root=self.params.data_path,
             train=True,
@@ -99,13 +101,25 @@ class CIFAR10Task(Task):
         self.classes = ('plane', 'car', 'bird', 'cat',
                         'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
         
-        self.clip_image = lambda x: torch.clamp(x, IMAGENET_MIN, IMAGENET_MAX)
+        # self.clip_image = lambda x: torch.clamp(x, IMAGENET_MIN, IMAGENET_MAX)
+        self.clip_image = lambda x: torch.clamp(x, 0.0, 1.0)
         self.target_transform = lambda x: torch.ones_like(x) * self.params.backdoor_label
         return True
 
     def build_model(self) -> nn.Module:
         # model = resnet18(pretrained=False,
         #                 num_classes=len(self.classes))
+        # from torchvision.models import resnet18, ResNet18_Weights
+        # weights = ResNet18_Weights.DEFAULT
+        # model = resnet18(weights=weights)
+        # num_features = model.fc.in_features
+        # model.fc = nn.Linear(num_features, 10)
+        
+        # model = ResNet18().to("cuda")
+        # with open("/home/vishc2/sonnh/Venomancer/pretrained/model_last.pt.tar.epoch_200", "rb") as f:
+        #     checkpoint = torch.load(f, map_location="cuda")
+        #     model.load_state_dict(checkpoint["state_dict"])
 
         model = ResNet18()
+
         return model
