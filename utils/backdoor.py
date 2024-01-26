@@ -402,10 +402,14 @@ def get_grad_mask(hlpr, local_model, local_optimizer, clean_dataloader, history_
             k_layer += 1
 
     grad_list = torch.cat(grad_list).to(hlpr.params.device)
-    if len(history_grad_list_neurotoxin) >= 10:
-        history_grad_list_neurotoxin.pop(0) # Prevent memory to overflow
-    history_grad_list_neurotoxin.append(grad_list)
-    grad_list = sum(history_grad_list_neurotoxin) / len(history_grad_list_neurotoxin)
+
+    ### MY IDEA ###
+    # if len(history_grad_list_neurotoxin) >= 10:
+    #     history_grad_list_neurotoxin.pop(0) # Prevent memory to overflow
+    # history_grad_list_neurotoxin.append(grad_list)
+    # grad_list = sum(history_grad_list_neurotoxin) / len(history_grad_list_neurotoxin)
+    ###############
+
     # history_grad_list_neurotoxin.append(grad_list)
     # if len(history_grad_list_neurotoxin) == 2:
     #     grad_list = 0.9*history_grad_list_neurotoxin[0] + 0.1*history_grad_list_neurotoxin[1]
