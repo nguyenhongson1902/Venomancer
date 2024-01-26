@@ -412,3 +412,23 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 
 Experiment 90: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (Compare to exp89, stop poisoning at 3000, apply gradmask_ratio 0.95, average grad_list of the latest 10 rounds, check durability)
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp90/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp90/"$mytime"/logs.txt"
+
+Experiment 91: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (eps 0.05, train like a gan, 1/10 adversary, fixed_frequency 1)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp91/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp91/"$mytime"/logs.txt"
+
+Experiment 92: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (eps 0.05, train like a gan IBA, 1/10 adversary, fixed_frequency 1)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp92/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp92/"$mytime"/logs.txt"
+
+Experiment 93: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (eps 0.1, train like a gan IBA, 1/10 adversary, fixed_frequency 1)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp93/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp93/"$mytime"/logs.txt"
+
+Experiment 94: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (eps 0.05, unet, train like a gan IBA, 1/10 adversary, fixed_frequency 1)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp94/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp94/"$mytime"/logs.txt"
+
+Experiment 95: CIFAR-10, select 10 / 100, 4 / 10 adversaries, poison 1-3000, fixed frequency 1, non-iid 0.5, fl_poison_epochs 5, alpha 0.5, lr 0.005, fedavg, fl_weight_scale 1, adversarial training (autoencoder, multitarget, train like a gan with visual loss, 1/10 adversary, fixed_frequency 1)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp95/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp95/"$mytime"/logs.txt"
+
+
+
+
+

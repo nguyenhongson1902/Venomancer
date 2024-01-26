@@ -432,11 +432,13 @@ class Task:
             atkmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             # atkmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
             # atkmodel = Autoencoder().to(self.params.device)
+            # atkmodel = UNet(3).to(self.params.device)
 
             # tgtmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
             tgtmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             # tgtmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
             # tgtmodel = Autoencoder().to(self.params.device)
+            # tgtmodel = UNet(3).to(self.params.device)
             tgtmodel.load_state_dict(atkmodel.state_dict(), strict=True)
 
             # tgtoptimizer = torch.optim.Adam(tgtmodel.parameters(), lr=self.params.lr_atk)

@@ -7,10 +7,10 @@ test_batch_size: 512
 lr: 0.01
 momentum: 0.9
 decay: 0.0005
-epochs: 5000
+epochs: 1000
 poison_epoch: 1
-poison_epoch_stop: 5000
-save_on_epochs: [] # [30, 50, 80, 100, 120, 150, 170, 200]
+poison_epoch_stop: 1000
+save_on_epochs: [100, 200, 400, 500, 700, 900] # [100, 200, 400, 500, 700, 900]
 optimizer: SGD #SGD
 log_interval: 100
 device: cuda
@@ -35,7 +35,7 @@ fl_eta: 1 # 0.8
 fl_sample_dirichlet: True
 fl_dirichlet_alpha: 0.5
 
-fl_number_of_adversaries: 4
+fl_number_of_adversaries: 2
 fl_weight_scale: 1
 fl_adv_group_size: 2
 # fl_single_epoch_attack: 200
@@ -51,7 +51,7 @@ lagrange_step: 0.1
 # Marksman Settings
 clsmodel: resnet18 # vgg11
 lr_atk: 0.0002
-eps: 1.0 # epsilon for data poisoning
+eps: 0.01 # epsilon for data poisoning
 # target_label: 1
 num_classes: 10
 attack_portion: 
