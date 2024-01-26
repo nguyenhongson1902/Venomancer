@@ -13,9 +13,11 @@ from utils.utils import *
 from utils.backdoor import IMAGENET_MIN, IMAGENET_MAX, PostTensorTransform, make_backdoor_batch, aggregate_atkmodels, pick_best_atkmodel, pick_backdoor_label_samples, get_grad_mask, apply_grad_mask
 
 from attack_models.autoencoders import MNISTAutoencoder as Autoencoder
+import pytorch_ssim
 
 import pickle
 import wandb
+import copy
 
 
 logger = logging.getLogger('logger')
@@ -923,10 +925,15 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             # First, update the atkmodel weights using tgtoptimizer.step(), fix local_model weights
             # noise = tgtmodel(data) * hlpr.params.eps # Do I need to pass atktarget?
             noise = tgtmodel(data, atktarget)
+            # print("data+noise min", (data + noise).min())
+            # print("data+noise max", (data + noise).max())
             atkdata = clip_image(data + noise)
+            # atkdata = data + noise
 
-            augmented_atkdata = post_transforms(atkdata)
-            augmented_data = post_transforms(data)
+            # augmented_atkdata = post_transforms(atkdata)
+            # augmented_data = post_transforms(data)
+            augmented_atkdata = atkdata.clone()
+            augmented_data = data.clone()
 
             # Calculus loss
             atkoutput = local_model(augmented_atkdata)
@@ -935,9 +942,29 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
 
             # local_optimizer.zero_grad()
             tgtoptimizer.zero_grad()
-            visual_loss = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
+            # visual_loss = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
             # (0.999*atkloss + 0.001*visual_loss).mean().backward(retain_graph=True)
-            (0.9999*atkloss + 0.0001*visual_loss).mean().backward(retain_graph=True) # exp 85
+            # (0.9999*atkloss + 0.0001*visual_loss).mean().backward(retain_graph=True) # exp 85
+            # (atkloss + visual_loss).mean().backward(retain_graph=True)
+            # (0.9*atkloss + 0.1*visual_loss).mean().backward(retain_graph=True) # quite good
+            # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True) # not good
+            # (0.8*atkloss + 0.2*visual_loss).mean().backward(retain_graph=True)
+
+            visual_loss = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1))
+            # (atkloss + visual_loss).mean().backward(retain_graph=True)
+            # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
+            # (0.9*atkloss + 0.1*visual_loss).mean().backward(retain_graph=True)
+            (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
+
+            # ssim = pytorch_ssim.SSIM(window_size=11)
+            # visual_loss = (ssim(atkdata, data) + 1) / 2
+            # (atkloss + visual_loss).mean().backward(retain_graph=True)
+
+            # huber_loss = torch.nn.HuberLoss(reduction='none', delta=1.0)
+            # visual_loss = huber_loss(atkdata, data).sum(dim=(1,2,3))
+            # # (atkloss + visual_loss).mean().backward(retain_graph=True)
+            # (0.9*atkloss + 0.1*visual_loss).mean().backward(retain_graph=True)
+            
             tgtoptimizer.step() # Only update the weights of the generative model
 
             
@@ -946,9 +973,12 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             # noise = tgtmodel(data) * hlpr.params.eps
             noise = tgtmodel(data, atktarget)
             atkdata = clip_image(data + noise)
+            # atkdata = data + noise
 
-            augmented_atkdata = post_transforms(atkdata)
-            augmented_data = post_transforms(data)
+            # augmented_atkdata = post_transforms(atkdata)
+            # augmented_data = post_transforms(data)
+            augmented_atkdata = atkdata.clone()
+            augmented_data = data.clone()
 
             output = local_model(augmented_data)
             atkoutput = local_model(augmented_atkdata.detach())
@@ -980,7 +1010,8 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             local_dataset_size += bs
 
             data, target = batch.inputs, batch.labels
-            augmented_data = post_transforms(data)
+            # augmented_data = post_transforms(data)
+            augmented_data = data.clone()
 
             output = local_model(augmented_data)
             loss = hlpr.task.criterion(output, target)
@@ -1020,8 +1051,11 @@ def train_like_a_gan_with_visual_loss_check_durability(hlpr: Helper, local_epoch
             noise = tgtmodel(data, atktarget)
             atkdata = clip_image(data + noise)
 
-            augmented_atkdata = post_transforms(atkdata)
-            augmented_data = post_transforms(data)
+            # augmented_atkdata = post_transforms(atkdata)
+            # augmented_data = post_transforms(data)
+
+            augmented_atkdata = atkdata.clone()
+            augmented_data = data.clone()
 
             # Calculus loss
             atkoutput = local_model(augmented_atkdata)
@@ -1031,8 +1065,8 @@ def train_like_a_gan_with_visual_loss_check_durability(hlpr: Helper, local_epoch
             # local_optimizer.zero_grad()
             tgtoptimizer.zero_grad()
             visual_loss = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
-            # (0.999*atkloss + 0.001*visual_loss).mean().backward(retain_graph=True)
-            (0.9999*atkloss + 0.0001*visual_loss).mean().backward(retain_graph=True) # exp 85
+            (0.999*atkloss + 0.001*visual_loss).mean().backward(retain_graph=True)
+            # (0.9999*atkloss + 0.0001*visual_loss).mean().backward(retain_graph=True) # exp 85
             tgtoptimizer.step() # Only update the weights of the generative model
 
             
@@ -1042,8 +1076,11 @@ def train_like_a_gan_with_visual_loss_check_durability(hlpr: Helper, local_epoch
             noise = tgtmodel(data, atktarget)
             atkdata = clip_image(data + noise)
 
-            augmented_atkdata = post_transforms(atkdata)
-            augmented_data = post_transforms(data)
+            # augmented_atkdata = post_transforms(atkdata)
+            # augmented_data = post_transforms(data)
+
+            augmented_atkdata = atkdata.clone()
+            augmented_data = data.clone()
 
             output = local_model(augmented_data)
             atkoutput = local_model(augmented_atkdata.detach())
@@ -1094,6 +1131,133 @@ def train_like_a_gan_with_visual_loss_check_durability(hlpr: Helper, local_epoch
         cleanloss = sum(cleanlosslist) / local_dataset_size
         return cleanloss
 
+def train_like_a_gan_iba(hlpr: Helper, local_epoch, local_model, local_optimizer, local_train_loader, attack=True, global_model=None, 
+                    atkmodel=None, tgtmodel=None, tgtoptimizer=None, target_transform=None, clip_image=None, post_transforms=None, threshold_ba=0.75):
+    if attack:
+        # atkmodel.eval()
+        local_model.eval() # IMPORTANT
+        tgtmodel.train() # IMPORTANT
+        # print(id(tgtmodel))
+        local_ba = 0.0
+        # criterion = torch.nn.CrossEntropyLoss(reduction='none')
+        while local_ba < threshold_ba:
+            atklosslist = []
+            local_dataset_size = 0
+            backdoor_correct = 0
+
+            for batch_idx, data_labels in tqdm(enumerate(local_train_loader), total=len(local_train_loader)):
+                batch = hlpr.task.get_batch(batch_idx, data_labels)
+                bs = batch.batch_size
+                local_dataset_size += bs
+
+                data, target = batch.inputs, batch.labels
+                # data, target = copy.deepcopy(batch.inputs), copy.deepcopy(batch.labels)
+
+                atktarget = target_transform(target) # Flipping label
+                
+                # print(atktarget)
+                # atktarget = target_transform(target, n_classes=10)
+
+                # First, update the atkmodel weights using tgtoptimizer.step(), fix local_model weights
+                noise = tgtmodel(data) * hlpr.params.eps # Do I need to pass atktarget?
+                # noise = tgtmodel(data, atktarget) * hlpr.params.eps
+                atkdata = clip_image(data + noise)
+                # import IPython; IPython.embed(); exit(0)
+
+                # augmented_atkdata = post_transforms(atkdata)
+                # augmented_data = post_transforms(data)
+
+                augmented_atkdata = atkdata.clone()
+                augmented_data = data.clone()
+
+                # Calculus loss
+                atkoutput = local_model(augmented_atkdata)
+                atkloss = hlpr.task.criterion(atkoutput, atktarget)
+                # atkloss = criterion(atkoutput, atktarget)
+                atklosslist.append(sum(atkloss))
+                # atklosslist.append(atkloss.item())
+
+                backdoor_pred = atkoutput.max(1, keepdim=True)[1]
+                backdoor_correct += backdoor_pred.eq(atktarget.view_as(backdoor_pred)).sum().item()
+
+                # local_optimizer.zero_grad()
+                tgtoptimizer.zero_grad()
+                atkloss.mean().backward(retain_graph=True)
+                # atkloss.backward()
+                tgtoptimizer.step() # Only update the weights of the generative model
+
+                visual_diff = torch.sum(torch.square(atkdata - data)) / bs
+                if batch_idx % 10 or batch_idx == len(local_train_loader) - 1:
+                    print(f"Train Generative [Batch {batch_idx}/{len(local_train_loader)}, Epoch {local_epoch}], Generative Loss {atkloss.mean().item():.4f}, Visual Difference: {visual_diff.mean().item():.4f}")
+
+            local_ba = backdoor_correct / local_dataset_size
+            print(f"Local BA: {local_ba:.4f}")
+        
+
+        local_model.train() # IMPORTANT
+        tgtmodel.eval() # IMPORTANT
+        cleanlosslist = []
+        backdoorlosslist = []
+        # local_train_loader_iter = iter(local_train_loader)
+        # Second, update local_model weights using local_optimizer.step(), fix atkmodel weights
+        for batch_idx, data_labels in tqdm(enumerate(local_train_loader), total=len(local_train_loader)): 
+            noise = tgtmodel(data) * hlpr.params.eps
+            # noise = tgtmodel(data, atktarget) * hlpr.params.eps
+            atkdata = clip_image(data + noise)
+
+            # augmented_atkdata = post_transforms(atkdata)
+            # augmented_data = post_transforms(data)
+
+            augmented_atkdata = atkdata.clone()
+            augmented_data = data.clone()
+
+            output = local_model(augmented_data)
+            atkoutput = local_model(augmented_atkdata.detach())
+            clean_loss = hlpr.task.criterion(output, target)
+            cleanlosslist.append(sum(clean_loss))
+            backdoor_loss = hlpr.task.criterion(atkoutput, atktarget)
+            backdoorlosslist.append(sum(backdoor_loss))
+            total_loss = hlpr.params.alpha * clean_loss + (1-hlpr.params.alpha) * backdoor_loss
+
+            local_optimizer.zero_grad()
+            total_loss.mean().backward()
+            local_optimizer.step() # Only update the weights of the classifier model
+
+            if batch_idx % 10 or batch_idx == len(local_train_loader) - 1:
+                print(f"Train Malicious [Batch {batch_idx}/{len(local_train_loader)}, Epoch {local_epoch}], Classifier: Clean Loss {clean_loss.mean().item():.4f} " \
+                    f"Backdoor Loss {backdoor_loss.mean().item():.4f} Total {total_loss.mean().item():.4f}")
+        
+        atkloss = sum(atklosslist) / local_dataset_size
+        cleanloss = sum(cleanlosslist) / local_dataset_size
+        backdoorloss = sum(backdoorlosslist) / local_dataset_size
+
+        return atkloss, cleanloss, backdoorloss, local_ba
+    else:
+        local_model.train()
+        cleanlosslist = []
+        local_dataset_size = 0
+        for batch_idx, data_labels in tqdm(enumerate(local_train_loader), total=len(local_train_loader)):
+            batch = hlpr.task.get_batch(batch_idx, data_labels)
+            bs = batch.batch_size
+            local_dataset_size += bs
+
+            data, target = batch.inputs, batch.labels
+            # augmented_data = post_transforms(data)
+            augmented_data = data.clone()
+
+            output = local_model(augmented_data)
+            loss = hlpr.task.criterion(output, target)
+            cleanlosslist.append(sum(loss))
+
+            local_optimizer.zero_grad()
+            loss.mean().backward()
+            local_optimizer.step()
+
+            if batch_idx % 10 or batch_idx == len(local_train_loader) - 1:
+                print(f"Train Benign [Batch {batch_idx}/{len(local_train_loader)}, Epoch {local_epoch}], Classifier: Clean Loss {loss.mean().item():.4f}")
+        cleanloss = sum(cleanlosslist) / local_dataset_size
+        return cleanloss
+
 
 def train_like_a_gan(hlpr: Helper, local_epoch, local_model, local_optimizer, local_train_loader, attack=True, global_model=None, 
                     atkmodel=None, tgtmodel=None, tgtoptimizer=None, target_transform=None, clip_image=None, post_transforms=None):
@@ -1121,8 +1285,11 @@ def train_like_a_gan(hlpr: Helper, local_epoch, local_model, local_optimizer, lo
             noise = tgtmodel(data, atktarget) * hlpr.params.eps
             atkdata = clip_image(data + noise)
 
-            augmented_atkdata = post_transforms(atkdata)
-            augmented_data = post_transforms(data)
+            # augmented_atkdata = post_transforms(atkdata)
+            # augmented_data = post_transforms(data)
+
+            augmented_atkdata = atkdata.clone()
+            augmented_data = data.clone()
 
             # Calculus loss
             atkoutput = local_model(augmented_atkdata)
@@ -1141,8 +1308,11 @@ def train_like_a_gan(hlpr: Helper, local_epoch, local_model, local_optimizer, lo
             noise = tgtmodel(data, atktarget) * hlpr.params.eps
             atkdata = clip_image(data + noise)
 
-            augmented_atkdata = post_transforms(atkdata)
-            augmented_data = post_transforms(data)
+            # augmented_atkdata = post_transforms(atkdata)
+            # augmented_data = post_transforms(data)
+
+            augmented_atkdata = atkdata.clone()
+            augmented_data = data.clone()
 
             output = local_model(augmented_data)
             atkoutput = local_model(augmented_atkdata.detach())
@@ -1254,6 +1424,7 @@ def train(hlpr: Helper, local_epoch, local_model, local_optimizer, local_train_l
 
         return atkloss, cleanloss, backdoorloss
     else:
+        local_model.train()
         cleanlosslist = []
         local_dataset_size = 0
         for batch_idx, data_labels in tqdm(enumerate(local_train_loader), total=len(local_train_loader)):
@@ -1262,12 +1433,15 @@ def train(hlpr: Helper, local_epoch, local_model, local_optimizer, local_train_l
             local_dataset_size += bs
 
             data, target = batch.inputs, batch.labels
-            augmented_data = post_transforms(data)
+            # augmented_data = post_transforms(data)
+
+            augmented_data = data.clone()
 
             output = local_model(augmented_data)
             loss = hlpr.task.criterion(output, target)
             cleanlosslist.append(sum(loss))
 
+            local_optimizer.zero_grad()
             loss.mean().backward()
             local_optimizer.step()
 
@@ -1282,6 +1456,9 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
     if model is None:
         model = hlpr.task.model # get the global model
     model.eval()
+
+    if atkmodel:
+        atkmodel.eval()
     # hlpr.task.reset_metrics()
 
     test_loss, correct = 0.0, 0
@@ -1301,6 +1478,14 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
                 target_transform = hlpr.task.sample_negative_labels
                 # atkdata, atktarget = make_backdoor_batch(hlpr, data, target, atkmodel, target_transform, multitarget=False)
                 atkdata, atktarget = make_backdoor_batch(hlpr, data, target, atkmodel, target_transform, multitarget=True)
+
+                visual_diff = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
+                # visual_diff = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1))
+                # ssim = pytorch_ssim.SSIM(window_size=11)
+                # visual_diff = (ssim(atkdata, data) + 1) / 2
+                # huber_loss = torch.nn.HuberLoss(reduction='none', delta=1.0)
+                # visual_diff = huber_loss(atkdata, data).sum(dim=(1,2,3))
+
                 atkoutput = model(atkdata)
 
                 test_backdoor_loss += hlpr.task.criterion(atkoutput, atktarget).sum().item()
@@ -1314,9 +1499,9 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
         test_backdoor_loss /= len(hlpr.task.test_loader.dataset)
         backdoor_acc = backdoor_correct / len(hlpr.task.test_loader.dataset)
 
-        print('\nTest [{}]: Clean Loss {:.4f}, Backdoor Loss {:.4f}, Clean Accuracy {:.4f}, Backdoor Accuracy {:.4f}'.format(epoch,
-                test_loss, test_backdoor_loss, acc, backdoor_acc))
-        return acc, backdoor_acc, test_loss, test_backdoor_loss
+        print('\nTest [{}]: Clean Loss {:.4f}, Backdoor Loss {:.4f}, Clean Accuracy {:.4f}, Backdoor Accuracy {:.4f}, Visual Difference {:.4f}'.format(epoch,
+                test_loss, test_backdoor_loss, acc, backdoor_acc, visual_diff.mean().item()))
+        return acc, backdoor_acc, test_loss, test_backdoor_loss, visual_diff.mean().item()
     else:
         # raise the error that informs the user atkmodel is None using raise
         raise ValueError("atkmodel is None")
@@ -1440,6 +1625,7 @@ def train_with_patch(hlpr: Helper, local_epoch, local_model, local_optimizer, lo
 
 def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotoxin):
     global_model = hlpr.task.model
+    global_model.train()
     local_model = hlpr.task.local_model
     round_participants = hlpr.task.sample_users_for_round(epoch)
     weight_accumulator = hlpr.task.get_empty_accumulator()
@@ -1469,13 +1655,17 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
                 #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
                 #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
                 
-                # atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
+                # atkloss, cleanloss, backdoorloss, local_ba = train_like_a_gan_iba(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
                 #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
-                #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
+                #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms, threshold_ba=0.85)
                 
-                atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss_check_durability(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
+                atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
                                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
-                                                         clip_image=hlpr.task.clip_image, post_transforms=post_transforms, mask_grad_list=mask_grad_list)
+                                                         clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
+                
+                # atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss_check_durability(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
+                #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
+                #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms, mask_grad_list=mask_grad_list)
                 
                 # atkloss, cleanloss, backdoorloss = train_like_a_gan_learnable_eps(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
                 #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
@@ -1517,6 +1707,7 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
 
     # hlpr.attack.perform_attack(global_model, epoch)
     hlpr.defense.aggr(weight_accumulator, global_model)
+    # import IPython; IPython.embed(); exit();
     hlpr.task.update_global_model(weight_accumulator, global_model)
 
     # return atkmodel_avg, tgtmodel_avg, tgtoptimizer_avg
@@ -1537,10 +1728,10 @@ def run(hlpr: Helper):
         atkmodel, tgtmodel, tgtoptimizer, local_backdoor_acc = run_fl_round(hlpr, epoch, atkmodels_dict, history_grad_list_neurotoxin)
 
         # atkmodel.eval() # Starts from exp66
-        clean_acc, backdoor_acc, clean_loss, backdoor_loss = test(hlpr, epoch, backdoor=True, atkmodel=atkmodel)
+        clean_acc, backdoor_acc, clean_loss, backdoor_loss, visual_diff = test(hlpr, epoch, backdoor=True, atkmodel=tgtmodel) # Use tgtmodel (currently in the eval mode)
         # clean_acc, backdoor_acc, clean_loss, backdoor_loss = test_with_patch(hlpr, epoch)
         # wandb log acc and backdoor_acc, clean_loss, backdoor_loss
-        wandb.log({"Clean Accuracy": clean_acc, "Backdoor Accuracy": backdoor_acc, "Clean Loss": clean_loss, "Backdoor Loss": backdoor_loss})
+        wandb.log({"Clean Accuracy": clean_acc, "Backdoor Accuracy": backdoor_acc, "Clean Loss": clean_loss, "Backdoor Loss": backdoor_loss, "Visual Difference": visual_diff})
         # hlpr.record_accuracy(metric, test(hlpr, epoch, backdoor=True), epoch)
 
         # hlpr.save_model(hlpr.task.model, epoch, metric)
@@ -1551,8 +1742,7 @@ def run(hlpr: Helper):
         # if decay:
         #     hlpr.params.eps = max(0.05, hlpr.params.eps*(1 - 0.001)**(epoch - start_decay_epoch))
 
-    print("Saving the model...")
-    hlpr.save_model(hlpr.task.model, tgtmodel, epoch)
+        hlpr.save_model(hlpr.task.model, tgtmodel, epoch)
 
 if __name__ == '__main__':
     # print('aslkdhjaskdjaskdj')
@@ -1570,7 +1760,7 @@ if __name__ == '__main__':
     helper = Helper(params)
      # Transform original labels to target labels, default: all2one
     wandb.login(key="917b44927c77ee61ea91005724c9bd9b470f116a")
-    wandb.init(project="backdoor-attack", entity="nguyenhongsonk62hust", name=f"{params['name']}-{params['current_time']}", dir="/hdd/home/ssd_data/Son/LRBA/wandb")
+    wandb.init(project="backdoor-attack", entity="nguyenhongsonk62hust", name=f"{params['name']}-{params['current_time']}", dir="/hdd/home/ssd_data/Son/Venomancer/wandb")
     logger.warning(create_table(params)) # Print the table of parameters to the terminal, showing as warnings
     try:
         run(helper)
