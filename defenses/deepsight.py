@@ -24,17 +24,18 @@ class Deepsight(FedAvg):
         num_channel = 3
         if 'MNIST' in self.params.task:
             # This is the default setting for MNIST
-            # dim = 28
-            # num_channel = 1
+            dim = 28
+            num_channel = 1
             
             # When applying Grayscale transform
-            dim = 32
-        elif 'Cifar10' in self.params.task:
+            # dim = 32
+        elif 'cifar10' in self.params.task.lower():
             dim = 32
         else:
             dim = 224
-        layer_name = 'fc2' if 'MNIST' in self.params.task else 'fc' # For SimpleNet
+        # layer_name = 'fc2' if 'MNIST' in self.params.task else 'fc' # For SimpleNet
         # layer_name = 'linear9' if 'MNIST' in self.params.task else 'fc' # For NetC_MNIST
+        layer_name = "linear" if "cifar10" in self.params.task.lower() else "fc"
         num_classes = 200 if 'Imagenet' in self.params.task else 10
 
         # Threshold exceedings and NEUPs
