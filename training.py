@@ -1665,7 +1665,7 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
             # target_transform = hlpr.task.target_transform
             target_transform = hlpr.task.sample_negative_labels
             
-            mask_grad_list = get_grad_mask(hlpr, local_model, local_optimizer, user.train_loader, history_grad_list_neurotoxin, ratio=hlpr.params.gradmask_ratio)
+            # mask_grad_list = get_grad_mask(hlpr, local_model, local_optimizer, user.train_loader, history_grad_list_neurotoxin, ratio=hlpr.params.gradmask_ratio)
 
             logger.warning(f"Compromised user: {user.user_id} in run_fl_round function {epoch}")
             for local_epoch in tqdm(range(hlpr.params.fl_poison_epochs)):
@@ -1681,13 +1681,13 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
                 #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
                 #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms, threshold_ba=0.85)
                 
-                # atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
-                #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
-                #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
-                
-                atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss_check_durability(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
+                atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
                                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
-                                                         clip_image=hlpr.task.clip_image, post_transforms=post_transforms, mask_grad_list=mask_grad_list)
+                                                         clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
+                
+                # atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss_check_durability(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
+                #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
+                #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms, mask_grad_list=mask_grad_list)
                 
                 # atkloss, cleanloss, backdoorloss = train_like_a_gan_learnable_eps(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
                 #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
