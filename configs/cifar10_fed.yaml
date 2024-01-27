@@ -9,7 +9,7 @@ momentum: 0.9
 decay: 0.0005
 epochs: 1000
 poison_epoch: 1
-poison_epoch_stop: 400
+poison_epoch_stop: 1000
 save_on_epochs: [100, 200, 400, 500, 700, 900] # [100, 200, 400, 500, 700, 900]
 optimizer: SGD #SGD
 log_interval: 100
@@ -64,7 +64,7 @@ random_rotation: 10
 random_crop: 5
 dataset: cifar10
 mode: all2one
-fixed_frequency: 1
+fixed_frequency: 10
 gradmask_ratio: 0.95
 # normal_training: False # False means only training benign clients, True means training malicious (if any) and benign clients
 # only_target_examples: False # False means get randomly examples from the original dataset, True means get only the target examples
