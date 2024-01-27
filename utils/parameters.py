@@ -88,7 +88,7 @@ class Params:
 
     attack: str = None #'ThrDFed' (3DFed), 'ModelRplace' (Model Replacement)
     
-    #"Foolsgold", "FLAME", "RFLBAT", "Deepsight", "FLDetector"
+    #"Weak_DP", "Norm_Clipping", "Foolsgold", "FLAME", "RFLBAT", "Deepsight", "FLDetector"
     defense: str = None 
     lagrange_step: float = None
     random_neurons: List[int] = None
@@ -127,6 +127,9 @@ class Params:
     # local_backdoor_acc: float = None
 
     # multiplier: int = 3
+    
+    norm_bound: float = 3.0 # for Norm_Clipping defense
+    stddev: float = 0.158 # for Weak_DP defense
 
     def __post_init__(self):
         # enable logging anyways when saving statistics
