@@ -96,7 +96,7 @@ class Helper:
             defense_class = getattr(defense_module, f'{name_cap}')
         except (ModuleNotFoundError, AttributeError):
             raise ModuleNotFoundError(f'Your defense: {self.params.defense} should '
-                                      f'be one of the follow: FLAME, Deepsight, \
+                                      f'be one of the follow: Norm_Clipping, FLAME, Deepsight, \
                                         Foolsgold, FLDetector, RFLBAT, FedAvg')
         self.defense = defense_class(self.params)
 

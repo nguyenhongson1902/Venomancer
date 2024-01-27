@@ -1708,7 +1708,7 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
 
             local_update = hlpr.attack.get_fl_update(local_model, global_model)
             for name in local_update.keys():
-                local_update[name] *= hlpr.params.fl_weight_scale 
+                local_update[name] *= hlpr.params.fl_weight_scale
         else:
             if user.user_id in atkmodels_dict.keys():
                 malicious_local_models[user.user_id] = local_model
@@ -1730,10 +1730,21 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
     # atkmodel_avg, tgtmodel_avg, tgtoptimizer_avg = aggregate_atkmodels(hlpr, atkmodels_dict, round_participants)
     best_atkmodel, best_tgtmodel, best_tgtoptimizer, local_backdoor_acc = pick_best_atkmodel(hlpr, atkmodels_dict, round_participants, malicious_local_models)
 
+    # Apply defenses here
+    if hlpr.params.defense.lower() == "norm_clipping":
+        print("Apply norm clipping") # DEBUG
+        hlpr.defense.clip_weight_diff()
+
     # hlpr.attack.perform_attack(global_model, epoch)
     hlpr.defense.aggr(weight_accumulator, global_model)
+
     # import IPython; IPython.embed(); exit();
     hlpr.task.update_global_model(weight_accumulator, global_model)
+
+    # Some defenses can be applied here
+    if hlpr.params.defense.lower() == "weak_dp":
+        print("Apply weak DP") # DEBUG
+        hlpr.defense.add_noise_to_weights(global_model)
 
     # return atkmodel_avg, tgtmodel_avg, tgtoptimizer_avg
     return best_atkmodel, best_tgtmodel, best_tgtoptimizer, local_backdoor_acc
