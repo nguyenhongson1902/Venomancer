@@ -9,7 +9,7 @@ momentum: 0.9
 decay: 0.0005
 epochs: 1000
 poison_epoch: 1
-poison_epoch_stop: 400
+poison_epoch_stop: 1000
 save_on_epochs: [100, 200, 400, 500, 700, 900] # [100, 200, 400, 500, 700, 900]
 optimizer: SGD #SGD
 log_interval: 100
@@ -43,7 +43,7 @@ fl_local_updated_models: {}
 fl_weight_contribution: {}
 
 attack: ModelReplace
-defense: FedAvg # FLAME, Deepsight, Foolsgold, FLDetector, RFLBAT, FedAvg
+defense: Weak_DP # Weak_DP, Norm_Clipping, FLAME, Deepsight, Foolsgold, FLDetector, RFLBAT, FedAvg
 fl_num_neurons: 5
 noise_mask_alpha: 0 # 0.5
 lagrange_step: 0.1
@@ -64,7 +64,10 @@ random_rotation: 10
 random_crop: 5
 dataset: cifar10
 mode: all2one
-fixed_frequency: 10
+fixed_frequency: 1
 gradmask_ratio: 0.95
 # normal_training: False # False means only training benign clients, True means training malicious (if any) and benign clients
 # only_target_examples: False # False means get randomly examples from the original dataset, True means get only the target examples
+
+norm_bound: 3.0 # weight diff clipping defense
+stddev: 0.158 # for weak_dp defense
