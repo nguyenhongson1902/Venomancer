@@ -70,4 +70,4 @@ gradmask_ratio: 0.95
 # only_target_examples: False # False means get randomly examples from the original dataset, True means get only the target examples
 
 norm_bound: 3.0 # weight diff clipping defense
-stddev: 0.158 # for weak_dp defense
+stddev: 0.002 # for weak_dp defense

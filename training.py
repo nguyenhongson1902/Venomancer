@@ -1478,6 +1478,7 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
             
             data, target = batch.inputs, batch.labels
             output = model(data)
+            # print("output", output)
             test_loss += hlpr.task.criterion(output, target).sum().item()
             pred = output.max(1, keepdim=True)[1]  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()
@@ -1496,6 +1497,7 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
                 # visual_diff = huber_loss(atkdata, data).sum(dim=(1,2,3))
 
                 atkoutput = model(atkdata)
+                # print("atkoutput", atkoutput)
 
                 test_backdoor_loss += hlpr.task.criterion(atkoutput, atktarget).sum().item()
                 atkpred = atkoutput.max(1, keepdim=True)[1]  # get the index of the max log-probability
@@ -1744,6 +1746,7 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
     # Some defenses can be applied here
     if hlpr.params.defense.lower() == "weak_dp":
         print("Apply weak DP") # DEBUG
+        # hlpr.defense.clip_weight_diff()
         hlpr.defense.add_noise_to_weights(global_model)
 
     # return atkmodel_avg, tgtmodel_avg, tgtoptimizer_avg
