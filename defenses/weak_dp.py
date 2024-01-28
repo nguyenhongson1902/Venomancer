@@ -43,9 +43,22 @@ class Weak_DP(FedAvg):
         vectorized_weight = torch.cat([global_weight[name].view(-1) for name in global_weight.keys()])
         gaussian_noise = torch.randn(vectorized_weight.size(),
                             device=self.params.device) * self.params.stddev
+        # print("gaussian_noise:", gaussian_noise)
+        # print("vectorized_weight", vectorized_weight)
         dp_weight = vectorized_weight + gaussian_noise
         self.load_model_weight(global_model, dp_weight)
         # logger.info("Weak DP Defense: added noise of norm: {}".format(torch.norm(gaussian_noise)))
+    
+    # def clip_weight_diff(self):
+    #     fl_local_updated_models = copy.deepcopy(self.params.fl_local_updated_models)
+    #     for user_id, local_update in fl_local_updated_models.items():
+    #         flatten_weights = torch.cat([local_update[name].view(-1) for name in local_update.keys()])                
+    #         weight_diff_norm = torch.norm(flatten_weights).item()
+
+    #         for name in local_update.keys():
+    #             local_update[name] = local_update[name]/max(1, weight_diff_norm/self.params.norm_bound)
+            
+    #         self.params.fl_local_updated_models[user_id] = local_update
         
 
         
