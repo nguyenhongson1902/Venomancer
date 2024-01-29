@@ -71,4 +71,4 @@ gradmask_ratio: 0.95
 
 norm_bound: 3.0 # weight diff clipping defense
 stddev: 0.002 # for weak_dp defense
-mode: krum # for krum defense
+mode_krum: multi_krum # for krum defense
