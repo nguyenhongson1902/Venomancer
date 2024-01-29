@@ -120,6 +120,7 @@ class Params:
     fl_round_participants: List[int] = None
     fl_weight_contribution: Dict[int, float] = None
     fl_local_updated_models: Dict[int, Dict[str, torch.Tensor]] = None
+    fl_number_of_samples_each_user: Dict[int, float] = None
 
     # current_acc_clean: float = 0.0
     # current_acc_poison: float = 0.0
