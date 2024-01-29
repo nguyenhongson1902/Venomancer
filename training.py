@@ -1740,10 +1740,8 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
         print("Apply norm clipping") # DEBUG
         hlpr.defense.clip_weight_diff()
     elif hlpr.params.defense.lower() == "krum":
-        print("Apply Krum") # DEBUG
-        #TODO: Call Krum here, it depends on the mode (krum or multi_krum)
-        hlpr.defense.find_smallest_neighbors(participated_clients)
-        pass
+        print(f"Apply Krum, mode {hlpr.params.mode_krum}") # DEBUG
+        hlpr.defense.run(participated_clients)
 
     # hlpr.attack.perform_attack(global_model, epoch)
     hlpr.defense.aggr(weight_accumulator, global_model)
