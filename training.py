@@ -1654,12 +1654,15 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
     round_participants = hlpr.task.sample_users_for_round(epoch)
     weight_accumulator = hlpr.task.get_empty_accumulator()
 
+    participated_clients = {} # Map user id to its local model
     malicious_local_models = {}
     for user in tqdm(round_participants):
         hlpr.task.copy_params(global_model, local_model)
         local_optimizer = hlpr.task.make_optimizer(local_model)
         post_transforms = PostTensorTransform(hlpr.params).to(hlpr.params.device)
         
+        participated_clients[user.user_id] = local_model
+
         if user.compromised:
             malicious_local_models[user.user_id] = local_model
             atkmodel, tgtmodel, tgtoptimizer = atkmodels_dict[user.user_id]
@@ -1736,6 +1739,11 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
     if hlpr.params.defense.lower() == "norm_clipping":
         print("Apply norm clipping") # DEBUG
         hlpr.defense.clip_weight_diff()
+    elif hlpr.params.defense.lower() == "krum":
+        print("Apply Krum") # DEBUG
+        #TODO: Call Krum here, it depends on the mode (krum or multi_krum)
+        hlpr.defense.find_smallest_neighbors(participated_clients)
+        pass
 
     # hlpr.attack.perform_attack(global_model, epoch)
     hlpr.defense.aggr(weight_accumulator, global_model)
@@ -1761,7 +1769,7 @@ def run(hlpr: Helper):
     
     history_grad_list_neurotoxin = [] # Store grad_list for neurotoxin attack
 
-    class_accuracies_log = {}
+    class_accuracies_log = {} # logging accuracy for each class on wandb
     for epoch in range(hlpr.params.start_epoch,
                        hlpr.params.epochs + 1):
         logger.info(f"Communication round {epoch}")

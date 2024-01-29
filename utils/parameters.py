@@ -130,6 +130,7 @@ class Params:
     
     norm_bound: float = 3.0 # for Norm_Clipping defense
     stddev: float = 0.158 # for Weak_DP defense
+    mode_krum: str = None # for Krum defense
 
     def __post_init__(self):
         # enable logging anyways when saving statistics
