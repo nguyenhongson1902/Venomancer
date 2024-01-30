@@ -15,6 +15,8 @@ from defenses.fedavg import FedAvg
 logger = logging.getLogger('logger')
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
+# TODO: Refactor the defense
+
 class Deepsight(FedAvg):
     num_seeds: int = 3
     num_samples: int = 20000
