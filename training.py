@@ -954,7 +954,7 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             # (atkloss + visual_loss).mean().backward(retain_graph=True)
             # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
             # (0.9*atkloss + 0.1*visual_loss).mean().backward(retain_graph=True)
-            (0.1*atkloss + 0.9*visual_loss).mean().backward(retain_graph=True) # quite good with 2 clients
+            (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward(retain_graph=True) # quite good with 2 clients, beta = 0.1
             # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
 
             # ssim = pytorch_ssim.SSIM(window_size=11)
