@@ -56,7 +56,7 @@ eps: 0.01 # epsilon for data poisoning
 num_classes: 10
 attack_portion: 
 alpha: 0.5
-beta: 0.9
+beta: 1
 test_n_size: 10
 input_height: 32
 input_width: 32
