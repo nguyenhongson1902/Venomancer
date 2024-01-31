@@ -104,6 +104,7 @@ class Params:
     num_classes: int = None # Depends on the dataset
     attack_portion: float = None # Default 1.0 (100%)
     alpha: float = None
+    beta: float = None
     test_n_size: int = None # The number of examples to print out
     input_height: int = None
     input_width: int = None
