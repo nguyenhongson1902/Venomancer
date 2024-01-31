@@ -243,7 +243,7 @@ class Task:
         total_samples = sum([user.number_of_samples for user in sampled_users])
         # self.params.fl_weight_contribution = [user.number_of_samples / total_samples for user in sampled_users]
         self.params.fl_weight_contribution = {user.user_id: user.number_of_samples / total_samples for user in sampled_users}
-        self.params.fl_number_of_samples_each_user = {user.user_id: user.number_of_samples for user in sampled_users}
+        self.params.fl_number_of_samples_each_user = {user.user_id: user.number_of_samples for user in sampled_users} # for implementing krum defense
         self.params.fl_local_updated_models = {}
         logger.warning(f"Sampled users for round {epoch}: {self.params.fl_weight_contribution}")
 
