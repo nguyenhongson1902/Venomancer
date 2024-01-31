@@ -1,5 +1,6 @@
-# 3DFed
-This is the code for paper "3DFed: Adaptive and Extensible Framework for Covert Backdoor Attack in Federated Learning".
+# Venomancer
+![image](images/readme/venomancer.jpg)
+"Venomancer brings slow death to its enemies. It infects other living beings by its very Noxious Touch, and spewed Venomous Gales to slow and poison escaping prey. Part reptile and part orchid, it sprouts an endless army of toxin-spitting sentinels, the Plague Wards, to defend its perimeters with Acid Spit. Should foes draw near, they are sprayed with a massive, noxious Poison Nova, ensuring that even those who get away eventually succumb to the Venomancer's many Latent Toxins."
 
 ## Installation
 This code is tested on NVIDIA GeForce RTX3060 with CUDA 11.6.58 and 12th Gen Intel(R) Core(TM) i9-12900F for `python=3.6.13`, `tprch=1.7.0` and `torchvision=0.8.1`.
