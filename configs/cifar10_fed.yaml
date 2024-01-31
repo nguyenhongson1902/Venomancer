@@ -43,7 +43,7 @@ fl_local_updated_models: {}
 fl_weight_contribution: {}
 
 attack: ModelReplace
-defense: Krum # Krum, Weak_DP, Norm_Clipping, FLAME, Deepsight, Foolsgold, FLDetector, RFLBAT, FedAvg
+defense: Deepsight # Krum, Weak_DP, Norm_Clipping, FLAME, Deepsight, Foolsgold, FLDetector, RFLBAT, FedAvg
 fl_num_neurons: 5
 noise_mask_alpha: 0 # 0.5
 lagrange_step: 0.1
