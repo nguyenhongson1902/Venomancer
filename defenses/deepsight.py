@@ -45,7 +45,6 @@ class Deepsight(FedAvg):
             # file_name = f'{self.params.folder_path}/saved_updates/update_{i}.pth'
             # loaded_params = torch.load(file_name)
         for user_id, local_update in self.params.fl_local_updated_models.items():
-            # TODO: Load the local update from local model i
             loaded_params = local_update
 
             ed = np.append(ed, self.get_update_norm(loaded_params))
@@ -94,7 +93,7 @@ class Deepsight(FedAvg):
                     with torch.no_grad():
                         output_local = local_model(x)
                         output_global = global_model(x)
-                        if 'MNIST' != self.params.task.lower():
+                        if 'mnist' != self.params.task.lower():
                             output_local = torch.softmax(output_local, dim=1)
                             output_global = torch.softmax(output_global, dim=1)
                     temp = torch.div(output_local, output_global+1e-30) # avoid zero-value
@@ -142,7 +141,7 @@ class Deepsight(FedAvg):
         clusters = hdbscan.HDBSCAN(metric='precomputed').fit_predict(merged_distances)
         positive_counts = {}
         total_counts = {}
-
+        ## TODO: DEBUG
         for i, c in enumerate(clusters):
             if c==-1:
                 continue
