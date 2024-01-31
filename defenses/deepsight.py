@@ -15,7 +15,6 @@ from defenses.fedavg import FedAvg
 logger = logging.getLogger('logger')
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
-# TODO: Refactor the defense
 
 class Deepsight(FedAvg):
     num_seeds: int = 3
@@ -24,27 +23,31 @@ class Deepsight(FedAvg):
 
     def aggr(self, weight_accumulator, global_model: Module):
         num_channel = 3
-        if 'MNIST' in self.params.task:
+        if 'mnist' == self.params.task.lower():
             # This is the default setting for MNIST
             dim = 28
             num_channel = 1
             
             # When applying Grayscale transform
             # dim = 32
-        elif 'cifar10' in self.params.task.lower():
+        elif 'cifar10' == self.params.task.lower():
             dim = 32
         else:
             dim = 224
         # layer_name = 'fc2' if 'MNIST' in self.params.task else 'fc' # For SimpleNet
         # layer_name = 'linear9' if 'MNIST' in self.params.task else 'fc' # For NetC_MNIST
-        layer_name = "linear" if "cifar10" in self.params.task.lower() else "fc"
-        num_classes = 200 if 'Imagenet' in self.params.task else 10
+        layer_name = "linear" if "cifar10" == self.params.task.lower() else "fc"
+        num_classes = 200 if 'imagenet' == self.params.task.lower() else 10
 
         # Threshold exceedings and NEUPs
         TEs, NEUPs, ed = [], [], []
-        for i in range(self.params.fl_no_models):
-            file_name = f'{self.params.folder_path}/saved_updates/update_{i}.pth'
-            loaded_params = torch.load(file_name)
+        # for i in range(self.params.fl_no_models):
+            # file_name = f'{self.params.folder_path}/saved_updates/update_{i}.pth'
+            # loaded_params = torch.load(file_name)
+        for user_id, local_update in self.params.fl_local_updated_models.items():
+            # TODO: Load the local update from local model i
+            loaded_params = local_update
+
             ed = np.append(ed, self.get_update_norm(loaded_params))
             UPs = abs(loaded_params[f'{layer_name}.bias'].cpu().numpy()) +\
                 np.sum(abs(loaded_params[f'{layer_name}.weight'].cpu().numpy()), \
@@ -71,9 +74,12 @@ class Deepsight(FedAvg):
             dataset = NoiseDataset([num_channel, dim, dim], self.num_samples)
             loader = torch.utils.data.DataLoader(dataset, self.params.batch_size, shuffle=False)
 
-            for j in tqdm(range(self.params.fl_no_models)):
-                file_name = f'{self.params.folder_path}/saved_updates/update_{j}.pth'
-                loaded_params = torch.load(file_name)
+            # for j in tqdm(range(self.params.fl_no_models)):
+            #     file_name = f'{self.params.folder_path}/saved_updates/update_{j}.pth'
+            #     loaded_params = torch.load(file_name)
+            for user_id, local_update in tqdm(self.params.fl_local_updated_models.items()):
+                loaded_params = local_update
+
                 local_model = deepcopy(global_model)
                 for name, data in loaded_params.items():
                     if self.check_ignored_weights(name):
@@ -88,7 +94,7 @@ class Deepsight(FedAvg):
                     with torch.no_grad():
                         output_local = local_model(x)
                         output_global = global_model(x)
-                        if 'MNIST' not in self.params.task:
+                        if 'MNIST' != self.params.task.lower():
                             output_local = torch.softmax(output_local, dim=1)
                             output_global = torch.softmax(output_global, dim=1)
                     temp = torch.div(output_local, output_global+1e-30) # avoid zero-value
@@ -101,14 +107,16 @@ class Deepsight(FedAvg):
         logger.warning("Deepsight: Finish measuring DDif")
 
         # cosine distance
+        # for i in range(self.params.fl_no_models):
+        #     updates_name = f'{self.params.folder_path}/saved_updates/update_{i}.pth'
+        #     loaded_params = torch.load(updates_name)
         local_params = []
-        for i in range(self.params.fl_no_models):
-            updates_name = f'{self.params.folder_path}/saved_updates/update_{i}.pth'
-            loaded_params = torch.load(updates_name)
+        for user_id, local_update in self.params.fl_local_updated_models.items():
+            loaded_params = local_update
             for name, data in loaded_params.items():
                 if layer_name in name:
                     temp = local_model.state_dict()[name].cpu().numpy()
-                    local_params = np.append(local_params, temp)     
+                    local_params = np.append(local_params, temp)
         cd = smp.cosine_distances(local_params.reshape(self.params.fl_no_models, -1))
         logger.warning("Deepsight: Finish calculating cosine distance")
 
