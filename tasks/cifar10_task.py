@@ -75,10 +75,26 @@ class CIFAR10Task(Task):
         #     ])
         
         # transform_train = transforms.Compose([transforms.ToTensor(), self.normalize,])
-        transform_train = transforms.Compose([transforms.ToTensor(),])
+        transform_train = transforms.Compose([transforms.ToTensor(),]) # My method
+        
+        # A3FL transformations
+        # transform_train = transforms.Compose([
+        #     transforms.RandomCrop(32, padding=4),
+        #     transforms.RandomHorizontalFlip(),
+        #     transforms.ToTensor(),
+        #     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        # ])
+
         
         # transform_test = transforms.Compose([transforms.ToTensor(), self.normalize])
-        transform_test = transforms.Compose([transforms.ToTensor(),])
+        transform_test = transforms.Compose([transforms.ToTensor(),]) # My method
+
+        # A3FL transformations
+        # transform_test = transforms.Compose([
+        #     transforms.ToTensor(),
+        #     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        # ])
+
         self.train_dataset = torchvision.datasets.CIFAR10(
             root=self.params.data_path,
             train=True,
