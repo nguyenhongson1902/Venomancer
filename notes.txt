@@ -513,3 +513,9 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 Experiment 123: (beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, mnistconditionalautoencoder, multitarget, train like a gan with visual loss, 1/10 adversary)
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp123/"$mytime && python training.py --name mnist --params configs/mnist_fed.yaml --time $mytime > $(pwd)"/experiments/exp123/"$mytime"/logs.txt"
 
+Experiment 124: (beta=0.1, fedavg, fixed_frequency 1, poison 1-1000, mnistconditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp124/"$mytime && python training.py --name mnist --params configs/mnist_fed.yaml --time $mytime > $(pwd)"/experiments/exp124/"$mytime"/logs.txt"
+
+Experiment 125: (norm clipping, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, mnistconditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp125/"$mytime && python training.py --name mnist --params configs/mnist_fed.yaml --time $mytime > $(pwd)"/experiments/exp125/"$mytime"/logs.txt"
+
