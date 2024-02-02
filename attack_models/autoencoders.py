@@ -100,8 +100,8 @@ class MNISTConditionalAutoencoder(nn.Module):
         )
 
     def forward(self, x, c):
-        # c = self.linear_c(self.label_emb(c)).view(-1, 1, self.input_dim, self.input_dim)
-        # x = torch.cat([x, c], dim=1)
+        c = self.linear_c(self.label_emb(c)).view(-1, 1, self.input_dim, self.input_dim)
+        x = torch.cat([x, c], dim=1)
         x = self.encoder(x)
         x = self.decoder(x)
         return x    
