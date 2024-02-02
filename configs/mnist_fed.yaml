@@ -44,7 +44,7 @@ fl_local_updated_models: {}
 fl_weight_contribution: {}
 
 attack: ModelReplace
-defense: Norm_Clipping # Krum, Weak_DP, Norm_Clipping, FLAME, Deepsight, Foolsgold, FLDetector, RFLBAT, FedAvg
+defense: FedAvg # Krum, Weak_DP, Norm_Clipping, FLAME, Deepsight, Foolsgold, FLDetector, RFLBAT, FedAvg
 fl_num_neurons: 5
 noise_mask_alpha: 0 # 0.5
 lagrange_step: 0.1
@@ -57,7 +57,7 @@ eps: 0.01 # epsilon for data poisoning, deprecated
 num_classes: 10
 attack_portion: 1.0
 alpha: 0.5
-beta: 0.01
+beta: 0.3
 test_n_size: 10
 input_height: 28
 input_width: 28
