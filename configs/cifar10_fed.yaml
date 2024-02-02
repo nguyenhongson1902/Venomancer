@@ -51,10 +51,10 @@ lagrange_step: 0.1
 # Marksman Settings
 clsmodel: resnet18 # vgg11
 lr_atk: 0.0002
-eps: 0.01 # epsilon for data poisoning
+eps: 0.01 # epsilon for data poisoning, deprecated
 # target_label: 1
 num_classes: 10
-attack_portion: 
+attack_portion: 1.0
 alpha: 0.5
 beta: 0.01
 test_n_size: 10
