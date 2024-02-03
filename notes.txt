@@ -536,3 +536,6 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 
 Experiment 131: (beta=0.99, fedavg, fixed_frequency 1, poison 1-1000, mnistconditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary)
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp131/"$mytime && python training.py --name mnist --params configs/mnist_fed.yaml --time $mytime > $(pwd)"/experiments/exp131/"$mytime"/logs.txt"
+
+Experiment 132: (beta=1, fedavg, fixed_frequency 1, poison 1-1000, mnistconditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp132/"$mytime && python training.py --name mnist --params configs/mnist_fed.yaml --time $mytime > $(pwd)"/experiments/exp132/"$mytime"/logs.txt"
