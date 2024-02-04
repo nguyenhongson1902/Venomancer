@@ -920,7 +920,7 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             data, target = batch.inputs, batch.labels
 
             # atktarget = target_transform(target) # Flipping label
-            atktarget = target_transform(target, n_classes=10)
+            atktarget = target_transform(target, n_classes=hlpr.params.num_classes)
 
             # First, update the atkmodel weights using tgtoptimizer.step(), fix local_model weights
             # noise = tgtmodel(data) * hlpr.params.eps # Do I need to pass atktarget?
@@ -941,7 +941,8 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             atklosslist.append(sum(atkloss))
 
             # local_optimizer.zero_grad()
-            tgtoptimizer.zero_grad()
+            tgtoptimizer.zero_grad() # worked well, Feb 4, 2023
+            # tgtoptimizer.zero_grad(set_to_none=True)
             # visual_loss = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
             # (0.999*atkloss + 0.001*visual_loss).mean().backward(retain_graph=True)
             # (0.9999*atkloss + 0.0001*visual_loss).mean().backward(retain_graph=True) # exp 85
@@ -954,7 +955,8 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             # (atkloss + visual_loss).mean().backward(retain_graph=True)
             # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
             # (0.9*atkloss + 0.1*visual_loss).mean().backward(retain_graph=True)
-            (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward(retain_graph=True) # quite good with 2 clients, beta = 0.1
+            # (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward(retain_graph=True)
+            (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward()
             # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
 
             # ssim = pytorch_ssim.SSIM(window_size=11)
@@ -989,7 +991,8 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             backdoorlosslist.append(sum(backdoor_loss))
             total_loss = hlpr.params.alpha * clean_loss + (1-hlpr.params.alpha) * backdoor_loss
 
-            local_optimizer.zero_grad()
+            local_optimizer.zero_grad() # worked well, Feb 4, 2023
+            # local_optimizer.zero_grad(set_to_none=True)
             total_loss.mean().backward()
             local_optimizer.step() # Only update the weights of the classifier model
 
@@ -1513,7 +1516,8 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
 
     # print("count", count)
     # n_test_examples_each_class = test_dataset_size // 10
-    assert len(class_counts) == 10, "The number of classes is not equal to 10. The problem is due to randomly sampling negative labels"
+    assert len(class_counts) == 15, "The number of classes is not equal to 15. The problem is due to randomly sampling negative labels"
+    # assert len(class_counts) == 10, "The number of classes is not equal to 10. The problem is due to randomly sampling negative labels"
     # print("class_accuracies", class_accuracies)
     # print("class_counts", class_counts)
     for tar, cor in class_accuracies.items():
