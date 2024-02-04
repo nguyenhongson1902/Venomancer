@@ -2,8 +2,8 @@ task: ChestXRay
 synthesizer: Pattern
 
 
-batch_size: 64
-test_batch_size: 512
+batch_size: 32
+test_batch_size: 64
 lr: 0.01
 momentum: 0.9
 decay: 0.0005
@@ -59,8 +59,8 @@ attack_portion: 1.0
 alpha: 0.5
 beta: 0.01
 test_n_size: 10
-input_height: 1024
-input_width: 1024
+input_height: 256
+input_width: 256
 input_channel: 1
 random_rotation: 10
 random_crop: 5
