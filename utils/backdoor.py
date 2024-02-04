@@ -231,7 +231,7 @@ def get_dataset(opt, train=True):
 def make_backdoor_batch(hlpr, data, target, atkmodel, target_transform, multitarget=False):
     # print("atkmodel", type(atkmodel))
     if multitarget:
-        atktarget = target_transform(target, n_classes=10)
+        atktarget = target_transform(target, n_classes=hlpr.params.num_classes)
         # noise = atkmodel(data, atktarget) * hlpr.params.eps
         noise = atkmodel(data, atktarget)
         # noise = torch.clamp(noise, -hlpr.params.eps, hlpr.params.eps)
