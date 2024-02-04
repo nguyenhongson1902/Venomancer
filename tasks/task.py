@@ -369,10 +369,14 @@ class Task:
         :param indices:
         :return:
         """
+        # train_loader = DataLoader(self.train_dataset,
+        #                           batch_size=self.params.batch_size,
+        #                           sampler=SubsetRandomSampler(
+        #                               indices), drop_last=True) # Bug happens when a client has the number of training examples < train batch size
         train_loader = DataLoader(self.train_dataset,
                                   batch_size=self.params.batch_size,
                                   sampler=SubsetRandomSampler(
-                                      indices), drop_last=True)
+                                      indices), drop_last=False)
         return train_loader, len(indices)
 
     def get_train_old(self, all_range, model_no):
