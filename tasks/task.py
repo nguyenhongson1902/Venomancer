@@ -479,6 +479,32 @@ class Task:
             tgtoptimizer = torch.optim.Adam(tgtmodel.parameters(), lr=self.params.lr_atk, betas=(0.5, 0.999)) # Starts from exp67
 
             return atkmodel, tgtmodel, tgtoptimizer
+        elif self.params.task.lower() == 'chestxray':
+            from attack_models.autoencoders import ChestXRayConditionalAutoencoder
+            from attack_models.unet import UNet
+
+            input_dim = self.params.input_shape[1]
+            n_classes = self.params.num_classes
+            
+            # atkmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
+            # atkmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            atkmodel = ChestXRayConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            # atkmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
+            # atkmodel = Autoencoder().to(self.params.device)
+            # atkmodel = UNet(3).to(self.params.device)
+
+            # tgtmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
+            # tgtmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            tgtmodel = ChestXRayConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            # tgtmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
+            # tgtmodel = Autoencoder().to(self.params.device)
+            # tgtmodel = UNet(3).to(self.params.device)
+            tgtmodel.load_state_dict(atkmodel.state_dict(), strict=True)
+
+            # tgtoptimizer = torch.optim.Adam(tgtmodel.parameters(), lr=self.params.lr_atk)
+            tgtoptimizer = torch.optim.Adam(tgtmodel.parameters(), lr=self.params.lr_atk, betas=(0.5, 0.999)) # Starts from exp67
+
+            return atkmodel, tgtmodel, tgtoptimizer
         else:
             raise NotImplementedError
 
