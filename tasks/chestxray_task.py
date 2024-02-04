@@ -23,29 +23,35 @@ class ChestXRayTask(Task):
         if self.params.fl_sample_dirichlet:
             # sample indices for participants using Dirichlet distribution
             # split = min(self.params.fl_total_participants / 20, 1)
-            split = 1.0
-            all_range = list(range(int(len(self.train_dataset) * split)))
-            self.train_dataset = Subset(self.train_dataset, all_range)
-            indices_per_participant = self.sample_dirichlet_train_data(
-                self.params.fl_total_participants,
-                alpha=self.params.fl_dirichlet_alpha)
-            # print("DEBUG: ", [len(indices) for indices in indices_per_participant.values()])
-            # train_loaders = [self.get_train(indices) for pos, indices in
-            #                  indices_per_participant.items()]
-            train_loaders, number_of_samples = zip(*[self.get_train(indices) for pos, indices in
-                             indices_per_participant.items()])
+            valid = False
+            while not valid:
+                split = 1.0
+                all_range = list(range(int(len(self.train_dataset) * split)))
+                self.train_dataset = Subset(self.train_dataset, all_range)
+                indices_per_participant = self.sample_dirichlet_train_data(
+                    self.params.fl_total_participants,
+                    alpha=self.params.fl_dirichlet_alpha)
+                # print("DEBUG: ", [len(indices) for indices in indices_per_participant.values()])
+                # train_loaders = [self.get_train(indices) for pos, indices in
+                #                  indices_per_participant.items()]
+                train_loaders, number_of_samples = zip(*[self.get_train(indices) for pos, indices in
+                                indices_per_participant.items()])
+                valid = 0 not in number_of_samples # If there is any client with 0 data, then resample
         else:
             # sample indices for participants that are equally
             # split = min(self.params.fl_total_participants / 20, 1)
-            split = 1.0
-            all_range = list(range(int(len(self.train_dataset) * split)))
-            self.train_dataset = Subset(self.train_dataset, all_range)
-            random.shuffle(all_range)
-            # train_loaders = [self.get_train_old(all_range, pos)
-            #                  for pos in
-            #                  range(self.params.fl_total_participants)]
-            train_loaders, number_of_samples = zip(*[self.get_train_old(all_range, pos)
-                                                for pos in range(self.params.fl_total_participants)])
+            valid = False
+            while not valid:
+                split = 1.0
+                all_range = list(range(int(len(self.train_dataset) * split)))
+                self.train_dataset = Subset(self.train_dataset, all_range)
+                random.shuffle(all_range)
+                # train_loaders = [self.get_train_old(all_range, pos)
+                #                  for pos in
+                #                  range(self.params.fl_total_participants)]
+                train_loaders, number_of_samples = zip(*[self.get_train_old(all_range, pos)
+                                                    for pos in range(self.params.fl_total_participants)])
+                valid = 0 not in number_of_samples # If there is any client with 0 data, then resample
         self.fl_train_loaders = train_loaders
         self.fl_number_of_samples = number_of_samples
         return
@@ -62,11 +68,23 @@ class ChestXRayTask(Task):
         # ])
 
         images_folder = "./.data/dataset/"
+        # transform_train = transforms.Compose([
+        #     transforms.ToTensor(),
+        # ])
+
+        # transform_test = transforms.Compose([
+        #     transforms.ToTensor(),
+        # ])
+
         transform_train = transforms.Compose([
+            transforms.Resize((256, 256)),
+            transforms.Grayscale(num_output_channels=1),
             transforms.ToTensor(),
         ])
 
         transform_test = transforms.Compose([
+            transforms.Resize((256, 256)),
+            transforms.Grayscale(num_output_channels=1),
             transforms.ToTensor(),
         ])
 
