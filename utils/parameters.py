@@ -111,7 +111,7 @@ class Params:
     input_channel: int = None
     random_rotation: int = None # for post transformations
     random_crop: int = None # for post transformations
-    dataset: str = None # 'mnist', 'cifar10'
+    dataset: str = None # 'mnist', 'cifar10', 'chestxray'
     mode: str = None # "all2one", "all2all"
     fixed_frequency: int = None
     gradmask_ratio: float = None
