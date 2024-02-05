@@ -1516,7 +1516,7 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
 
     # print("count", count)
     # n_test_examples_each_class = test_dataset_size // 10
-    assert len(class_counts) == 15, "The number of classes is not equal to 15. The problem is due to randomly sampling negative labels"
+    assert len(class_counts) in [15, 10], "The number of classes is not equal to 15 (chestxray) or 10 (mnist, cifar). The problem is due to randomly sampling negative labels"
     # assert len(class_counts) == 10, "The number of classes is not equal to 10. The problem is due to randomly sampling negative labels"
     # print("class_accuracies", class_accuracies)
     # print("class_counts", class_counts)
