@@ -28,15 +28,15 @@ log: True
 transform_train: True
 
 fl: True
-fl_no_models: 10
+fl_no_models: 1
 fl_local_epochs: 2
 fl_poison_epochs: 5
-fl_total_participants: 100
+fl_total_participants: 1
 fl_eta: 1
 fl_sample_dirichlet: True
 fl_dirichlet_alpha: 0.5
 
-fl_number_of_adversaries: 2
+fl_number_of_adversaries: 0
 fl_weight_scale: 1
 fl_adv_group_size: 2
 # fl_single_epoch_attack: 20
