@@ -3,6 +3,7 @@ import os
 
 import torch
 from torch.utils.data import Subset
+from torch.utils.data import Dataset
 import torch.utils.data as torch_data
 from torchvision.datasets import ImageFolder
 import torchvision
@@ -12,6 +13,36 @@ from torchvision.transforms import transforms
 from models.resnet_chestxray import ResNet18
 from tasks.task import Task
 
+from PIL import Image
+
+
+class ChestXRayDataset(Dataset):
+    def __init__(self, root_folder, transform=None):
+        self.root_folder = root_folder
+        self.transform = transform
+        self.classes = sorted(os.listdir(root_folder))
+        self.class_to_idx = {cls: idx for idx, cls in enumerate(self.classes)}
+        self.images = self.get_images()
+
+    def get_images(self):
+        images = []
+        for cls in self.classes:
+            class_folder = os.path.join(self.root_folder, cls)
+            for img_name in os.listdir(class_folder):
+                img_path = os.path.join(class_folder, img_name)
+                images.append((img_path, self.class_to_idx[cls]))
+        return images
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        img_path, label = self.images[idx]
+        img = Image.open(img_path).convert('L')  # Convert to grayscale
+        if self.transform:
+            img = self.transform(img)
+        return img, label
+    
 
 class ChestXRayTask(Task):
     normalize = transforms.Normalize((0.1307,), (0.3081,))
@@ -67,7 +98,7 @@ class ChestXRayTask(Task):
         #     self.normalize
         # ])
 
-        images_folder = "./.data/dataset/"
+        # images_folder = "./.data/dataset/" # accompanied with ImageFolder
         # transform_train = transforms.Compose([
         #     transforms.ToTensor(),
         # ])
@@ -76,24 +107,38 @@ class ChestXRayTask(Task):
         #     transforms.ToTensor(),
         # ])
 
-        transform_train = transforms.Compose([
-            transforms.Resize((256, 256)),
-            transforms.Grayscale(num_output_channels=1),
-            transforms.ToTensor(),
-        ])
+        # transform_train = transforms.Compose([
+        #     transforms.Resize((256, 256)),
+        #     transforms.Grayscale(num_output_channels=1),
+        #     transforms.ToTensor(),
+        # ]) # ImageFolder
 
-        transform_test = transforms.Compose([
-            transforms.Resize((256, 256)),
-            transforms.Grayscale(num_output_channels=1),
-            transforms.ToTensor(),
-        ])
+        # transform_test = transforms.Compose([
+        #     transforms.Resize((256, 256)),
+        #     transforms.Grayscale(num_output_channels=1),
+        #     transforms.ToTensor(),
+        # ]) # ImageFolder
+        
 
         # self.train_dataset = torchvision.datasets.MNIST(
         #     root=self.params.data_path,
         #     train=True,
         #     download=True,
         #     transform=transform_train)
-        self.train_dataset = ImageFolder(root=os.path.join(images_folder, "train_images_11257"), transform=transform_train)
+        # self.train_dataset = ImageFolder(root=os.path.join(images_folder, "train_images_11257"), transform=transform_train)
+        
+        train_path = "./.data/dataset/train_images_11257"
+        test_path = "./.data/dataset/test_images_2252"
+        transform_train = transforms.Compose([
+            transforms.Resize((256, 256)),
+            transforms.ToTensor(),
+        ])
+        transform_test = transforms.Compose([
+            transforms.Resize((256, 256)),
+            transforms.ToTensor(),
+        ])
+        
+        self.train_dataset = ChestXRayDataset(root_folder=train_path, transform=transform_train)
         self.train_loader = torch_data.DataLoader(self.train_dataset, batch_size=self.params.batch_size, shuffle=True, num_workers=0)
 
         # self.train_loader = torch_data.DataLoader(self.train_dataset,
@@ -105,7 +150,9 @@ class ChestXRayTask(Task):
         #     train=False,
         #     download=True,
         #     transform=transform_test)
-        self.test_dataset = ImageFolder(root=os.path.join(images_folder, "test_images_2252"), transform=transform_test)
+        # self.test_dataset = ImageFolder(root=os.path.join(images_folder, "test_images_2252"), transform=transform_test)
+        
+        self.test_dataset = ChestXRayDataset(root_folder=test_path, transform=transform_test)
         self.test_loader = torch_data.DataLoader(self.test_dataset, batch_size=self.params.test_batch_size, shuffle=False, num_workers=0)
 
         # self.test_loader = torch_data.DataLoader(self.test_dataset,

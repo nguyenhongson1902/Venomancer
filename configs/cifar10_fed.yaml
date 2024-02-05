@@ -19,7 +19,7 @@ poisoning_proportion: 1.0
 backdoor_label: 8
 
 resume_model: # model_CIFAR10_01.20_16.40.59_cifar10/model_last.pt.tar
-prefix: /hdd/home/ssd_data/Son/Venomancer/
+prefix: ./hdd/home/ssd_data/Son/Venomancer/
 
 save_model: True
 log: True

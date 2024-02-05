@@ -19,7 +19,7 @@ poisoning_proportion: 1.0
 backdoor_label: 8
 
 resume_model: # resume_model_mnist/model_epoch_10.pt.tar
-prefix: /hdd/home/ssd_data/Son/Venomancer/
+prefix: ./hdd/home/ssd_data/Son/Venomancer/
 
 save_model: True
 log: True
