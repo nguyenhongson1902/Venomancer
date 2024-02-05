@@ -541,9 +541,11 @@ Experiment 132: (beta=1, fedavg, fixed_frequency 1, poison 1-1000, mnistconditio
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp132/"$mytime && python training.py --name mnist --params configs/mnist_fed.yaml --time $mytime > $(pwd)"/experiments/exp132/"$mytime"/logs.txt"
 
 ----------------------------------ChestXRay14 (Subset)----------------------------------
-Experiment 133: (lab, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, chestxray14autoencoder, multitarget, train like a gan with visual loss, 2/10 adversary)
+Experiment 133: (lab, imagesize 256, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, chestxray14autoencoder, multitarget, train like a gan with visual loss, 2/10 adversary)
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp133/"$mytime && python training.py --name chestxray --params configs/chestxray_fed.yaml --time $mytime > $(pwd)"/experiments/exp133/"$mytime"/logs.txt"
 
-Experiment 134: (vishc, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, chestxray14autoencoder, multitarget, train like a gan with visual loss, 2/10 adversary)
+Experiment 134: (vishc, custom dataset, imagesize 256, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, chestxray14autoencoder, multitarget, train like a gan with visual loss, 2/10 adversary)
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp134/"$mytime && python training.py --name chestxray --params configs/chestxray_fed.yaml --time $mytime > $(pwd)"/experiments/exp134/"$mytime"/logs.txt"
 
+Experiment 135: (lab, imagesize 256, custom dataset, beta=0.01, fedavg, chestxray14autoencoder, train like a gan with visual loss, 1 client, 0/10 adversary)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp135/"$mytime && python training.py --name chestxray --params configs/chestxray_fed.yaml --time $mytime > $(pwd)"/experiments/exp135/"$mytime"/logs.txt"
