@@ -1449,7 +1449,8 @@ def train(hlpr: Helper, local_epoch, local_model, local_optimizer, local_train_l
             loss = hlpr.task.criterion(output, target)
             cleanlosslist.append(sum(loss))
 
-            local_optimizer.zero_grad()
+            local_optimizer.zero_grad() # Worked well Feb 5, 2024
+            # local_optimizer.zero_grad(set_to_none=True)
             loss.mean().backward()
             local_optimizer.step()
 
