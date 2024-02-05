@@ -131,10 +131,12 @@ class ChestXRayTask(Task):
         test_path = "./.data/dataset/test_images_2252"
         transform_train = transforms.Compose([
             transforms.Resize((256, 256)),
+            # transforms.Resize((512, 512)),
             transforms.ToTensor(),
         ])
         transform_test = transforms.Compose([
             transforms.Resize((256, 256)),
+            # transforms.Resize((512, 512)),
             transforms.ToTensor(),
         ])
         
