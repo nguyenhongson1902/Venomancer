@@ -2,8 +2,8 @@ task: ChestXRay
 synthesizer: Pattern
 
 
-batch_size: 2
-test_batch_size: 4
+batch_size: 8
+test_batch_size: 16
 lr: 0.001
 momentum: 0.9
 decay: 0.0005
@@ -28,15 +28,15 @@ log: True
 transform_train: True
 
 fl: True
-fl_no_models: 1
-fl_local_epochs: 1
+fl_no_models: 10
+fl_local_epochs: 2
 fl_poison_epochs: 5
-fl_total_participants: 1
+fl_total_participants: 100
 fl_eta: 1
 fl_sample_dirichlet: True
 fl_dirichlet_alpha: 0.5
 
-fl_number_of_adversaries: 0
+fl_number_of_adversaries: 2
 fl_weight_scale: 1
 fl_adv_group_size: 2
 # fl_single_epoch_attack: 20
@@ -50,7 +50,7 @@ noise_mask_alpha: 0 # 0.5
 lagrange_step: 0.1
 
 # Marksman Settings
-clsmodel: resnet18
+clsmodel: resnet50
 lr_atk: 0.0002
 eps: 0.01 # epsilon for data poisoning, deprecated
 # target_label: [8,8,8,8]
