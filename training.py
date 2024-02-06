@@ -1517,7 +1517,7 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
 
     # print("count", count)
     # n_test_examples_each_class = test_dataset_size // 10
-    assert len(class_counts) in [15, 10], "The number of classes is not equal to 15 (chestxray) or 10 (mnist, cifar). The problem is due to randomly sampling negative labels"
+    assert len(class_counts) in [15, 10, 0], "The number of classes is not equal to 15 (chestxray) or 10 (mnist, cifar) or 0 (no attack). The problem is due to randomly sampling negative labels"
     # assert len(class_counts) == 10, "The number of classes is not equal to 10. The problem is due to randomly sampling negative labels"
     # print("class_accuracies", class_accuracies)
     # print("class_counts", class_counts)
@@ -1531,6 +1531,9 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
         print('\nTest [{}]: Clean Loss {:.4f}, Backdoor Loss {:.4f}, Clean Accuracy {:.4f}, Backdoor Accuracy {:.4f}, Visual Difference {:.4f}'.format(epoch,
                 test_loss, test_backdoor_loss, acc, backdoor_acc, visual_diff.mean().item()))
         return acc, backdoor_acc, test_loss, test_backdoor_loss, visual_diff.mean().item(), class_accuracies
+    elif not atkmodel:
+        print('\nTest [{}]: Clean Loss {:.4f}'.format(epoch, test_loss))
+        return acc, None, test_loss, None, None, {}
     else:
         # raise the error that informs the user atkmodel is None using raise
         raise ValueError("atkmodel is None")
@@ -1738,7 +1741,9 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
         # if user.compromised:
         #     hlpr.attack.local_dataset = deepcopy(user.train_loader)
     # atkmodel_avg, tgtmodel_avg, tgtoptimizer_avg = aggregate_atkmodels(hlpr, atkmodels_dict, round_participants)
-    best_atkmodel, best_tgtmodel, best_tgtoptimizer, local_backdoor_acc = pick_best_atkmodel(hlpr, atkmodels_dict, round_participants, malicious_local_models)
+    if atkmodels_dict:
+        print("Picking the best atkmodel")
+        best_atkmodel, best_tgtmodel, best_tgtoptimizer, local_backdoor_acc = pick_best_atkmodel(hlpr, atkmodels_dict, round_participants, malicious_local_models)
 
     # Apply defenses here
     if hlpr.params.defense.lower() == "norm_clipping":
@@ -1761,7 +1766,10 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
         hlpr.defense.add_noise_to_weights(global_model)
 
     # return atkmodel_avg, tgtmodel_avg, tgtoptimizer_avg
-    return best_atkmodel, best_tgtmodel, best_tgtoptimizer, local_backdoor_acc
+    if atkmodels_dict:
+        return best_atkmodel, best_tgtmodel, best_tgtoptimizer, local_backdoor_acc
+    else:
+        return None, None, None, None
 
 def run(hlpr: Helper):
     decay = False
