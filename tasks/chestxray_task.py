@@ -2,15 +2,17 @@ import random
 import os
 
 import torch
+import torch.nn as nn
 from torch.utils.data import Subset
 from torch.utils.data import Dataset
 import torch.utils.data as torch_data
 from torchvision.datasets import ImageFolder
 import torchvision
 from torchvision.transforms import transforms
+from torchvision import models
 
 # from models.simple import SimpleNet, NetC_MNIST
-from models.resnet_chestxray import ResNet18
+from models.resnet_chestxray import ResNet18, ResNet50
 from tasks.task import Task
 
 from PIL import Image
@@ -168,7 +170,12 @@ class ChestXRayTask(Task):
         return True
 
     def build_model(self):
-        model = ResNet18()
+        # model = ResNet18() # from scratch
+        # model = models.resnet50(weights='ResNet50_Weights.DEFAULT')
+        # num_ftrs = model.fc.in_features
+        # model.fc = nn.Linear(num_ftrs, self.params.num_classes)  # Change the output layer to have 15 classes
+
+        model = ResNet50()
 
         return model
     
