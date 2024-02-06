@@ -549,3 +549,6 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 
 Experiment 135: (lab, imagesize 256, custom dataset, beta=0.01, fedavg, chestxray14autoencoder, train like a gan with visual loss, 1 client, 0/10 adversary)
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp135/"$mytime && python training.py --name chestxray --params configs/chestxray_fed.yaml --time $mytime > $(pwd)"/experiments/exp135/"$mytime"/logs.txt"
+
+Experiment 136: (lab, resnet50, imagesize 256, custom dataset, beta=0.01, fedavg, chestxray14autoencoder, train like a gan with visual loss, 1 client, 0/10 adversary)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp136/"$mytime && python training.py --name chestxray --params configs/chestxray_fed.yaml --time $mytime > $(pwd)"/experiments/exp136/"$mytime"/logs.txt"
