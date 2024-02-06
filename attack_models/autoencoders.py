@@ -154,6 +154,54 @@ class ConditionalAutoencoder(nn.Module):
         return x
 
 
+class ChestXRayConditionalAutoencoder(nn.Module):
+    def __init__(self, n_classes=15, input_dim=256):
+        super().__init__()
+        
+        self.label_emb = nn.Embedding(n_classes, n_classes)
+        # self.label_emb = nn.Embedding(n_classes, n_classes*10)
+        self.linear_c = nn.Linear(n_classes, 1 * input_dim * input_dim)
+        # self.linear_c = nn.Linear(n_classes*10, 1 * input_dim * input_dim)
+        self.n_classes = n_classes
+        self.input_dim = input_dim
+        
+        self.encoder = nn.Sequential(
+            nn.Conv2d(3+1, 16, 4, stride=2, padding=1),
+            nn.BatchNorm2d(16),
+            nn.ReLU(True),
+            nn.Conv2d(16, 32, 4, stride=2, padding=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(True),
+            nn.Conv2d(32, 64, 4, stride=2, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(True),
+            nn.Conv2d(64, 128, 4, stride=2, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(True)
+        )
+        self.decoder = nn.Sequential(
+            nn.ConvTranspose2d(128, 64, 4, stride=2, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(64, 32, 4, stride=2, padding=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(32, 16, 4, stride=2, padding=1),
+            nn.BatchNorm2d(16),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(16, 3, 4, stride=2, padding=1),
+            nn.Tanh()
+        )
+
+    def forward(self, x, c):
+        c = self.linear_c(self.label_emb(c)).view(-1, 1, self.input_dim, self.input_dim)
+        x = torch.cat([x, c], dim=1)
+        
+        x = self.encoder(x)
+        x = self.decoder(x)
+        return x
+    
+
 # class ChestXRayConditionalAutoencoder(nn.Module):
 #     def __init__(self, n_classes=15, input_dim=256):
 #         super().__init__()
@@ -229,42 +277,42 @@ class ConditionalAutoencoder(nn.Module):
 #         x = self.decoder(x)
 #         return x 
 
-class ChestXRayConditionalAutoencoder(nn.Module):
-    def __init__(self, n_classes=15, input_dim=224):
-        super().__init__()
-        self.label_emb = nn.Embedding(n_classes, n_classes)
-        self.linear_c = nn.Linear(n_classes, 1 * input_dim * input_dim)
-        self.n_classes = n_classes
-        self.input_dim = input_dim
+# class ChestXRayConditionalAutoencoder(nn.Module):
+#     def __init__(self, n_classes=15, input_dim=224):
+#         super().__init__()
+#         self.label_emb = nn.Embedding(n_classes, n_classes)
+#         self.linear_c = nn.Linear(n_classes, 1 * input_dim * input_dim)
+#         self.n_classes = n_classes
+#         self.input_dim = input_dim
         
-        self.encoder = nn.Sequential(
-            nn.Conv2d(1+1, 16, 1, stride=3, padding=1),  # b, 16, 76, 76
-            nn.BatchNorm2d(16),
-            nn.ReLU(True),
-            nn.MaxPool2d(2, stride=2),  # b, 16, 38, 38
-            nn.Conv2d(16, 64, 2, stride=2, padding=1),  # b, 64, 20, 20
-            nn.BatchNorm2d(64),
-            nn.ReLU(True),
-            nn.MaxPool2d(2, stride=1)  # b, 64, 19, 19
-        )
-        self.decoder = nn.Sequential(
-            nn.ConvTranspose2d(64, 128, 3, stride=2),  # b, 128, 39, 39
-            nn.BatchNorm2d(128),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(128, 64, 5, stride=3, padding=1),  # b, 64, 117, 117
-            nn.BatchNorm2d(64),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(64, 1, 2, stride=2, padding=5),  # b, 1, 224, 224
-            nn.BatchNorm2d(1),
-            nn.Tanh()
-        )
+#         self.encoder = nn.Sequential(
+#             nn.Conv2d(1+1, 16, 1, stride=3, padding=1),  # b, 16, 76, 76
+#             nn.BatchNorm2d(16),
+#             nn.ReLU(True),
+#             nn.MaxPool2d(2, stride=2),  # b, 16, 38, 38
+#             nn.Conv2d(16, 64, 2, stride=2, padding=1),  # b, 64, 20, 20
+#             nn.BatchNorm2d(64),
+#             nn.ReLU(True),
+#             nn.MaxPool2d(2, stride=1)  # b, 64, 19, 19
+#         )
+#         self.decoder = nn.Sequential(
+#             nn.ConvTranspose2d(64, 128, 3, stride=2),  # b, 128, 39, 39
+#             nn.BatchNorm2d(128),
+#             nn.ReLU(True),
+#             nn.ConvTranspose2d(128, 64, 5, stride=3, padding=1),  # b, 64, 117, 117
+#             nn.BatchNorm2d(64),
+#             nn.ReLU(True),
+#             nn.ConvTranspose2d(64, 1, 2, stride=2, padding=5),  # b, 1, 224, 224
+#             nn.BatchNorm2d(1),
+#             nn.Tanh()
+#         )
 
-    def forward(self, x, c):
-        c = self.linear_c(self.label_emb(c)).view(-1, 1, self.input_dim, self.input_dim)
-        x = torch.cat([x, c], dim=1)
-        x = self.encoder(x)
-        x = self.decoder(x)
-        return x 
+#     def forward(self, x, c):
+#         c = self.linear_c(self.label_emb(c)).view(-1, 1, self.input_dim, self.input_dim)
+#         x = torch.cat([x, c], dim=1)
+#         x = self.encoder(x)
+#         x = self.decoder(x)
+#         return x 
     
     
 # Toggle this if you want to use the conditional autoencoder WITH a fixed pattern embedded
