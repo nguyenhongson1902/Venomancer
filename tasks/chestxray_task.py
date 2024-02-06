@@ -133,11 +133,13 @@ class ChestXRayTask(Task):
         test_path = "./.data/dataset/test_images_2252"
         transform_train = transforms.Compose([
             transforms.Resize((256, 256)),
+            transforms.Grayscale(num_output_channels=3),
             # transforms.Resize((512, 512)),
             transforms.ToTensor(),
         ])
         transform_test = transforms.Compose([
             transforms.Resize((256, 256)),
+            transforms.Grayscale(num_output_channels=3),
             # transforms.Resize((512, 512)),
             transforms.ToTensor(),
         ])
@@ -170,12 +172,10 @@ class ChestXRayTask(Task):
         return True
 
     def build_model(self):
-        # model = ResNet18() # from scratch
-        # model = models.resnet50(weights='ResNet50_Weights.DEFAULT')
-        # num_ftrs = model.fc.in_features
-        # model.fc = nn.Linear(num_ftrs, self.params.num_classes)  # Change the output layer to have 15 classes
-
-        model = ResNet50()
+        # model = ResNet18()
+        model = models.resnet50(weights="ResNet50_Weights.DEFAULT")
+        num_ftrs = model.fc.in_features
+        model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
 
         return model
     
