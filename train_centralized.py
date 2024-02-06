@@ -61,7 +61,6 @@ test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=32, shuff
 # wandb.login(key="917b44927c77ee61ea91005724c9bd9b470f116a")
 # wandb.init(project="backdoor-attack", entity="nguyenhongsonk62hust", name=f"Test ChestXRay_Centralized", dir="./hdd/home/ssd_data/Son/Venomancer/wandb")
 
-#TODO: Intialize the model resnet50
 model = models.resnet50(weights="ResNet50_Weights.DEFAULT").to('cuda')
 
 
