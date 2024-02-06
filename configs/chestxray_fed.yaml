@@ -2,9 +2,9 @@ task: ChestXRay
 synthesizer: Pattern
 
 
-batch_size: 16
-test_batch_size: 64
-lr: 0.01
+batch_size: 2
+test_batch_size: 4
+lr: 0.001
 momentum: 0.9
 decay: 0.0005
 epochs: 1000
@@ -29,7 +29,7 @@ transform_train: True
 
 fl: True
 fl_no_models: 1
-fl_local_epochs: 2
+fl_local_epochs: 1
 fl_poison_epochs: 5
 fl_total_participants: 1
 fl_eta: 1
