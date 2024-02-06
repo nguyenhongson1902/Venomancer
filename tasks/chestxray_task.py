@@ -173,6 +173,7 @@ class ChestXRayTask(Task):
 
     def build_model(self):
         # model = ResNet18()
+        print("Loading ResNet50 model")
         model = models.resnet50(weights="ResNet50_Weights.DEFAULT")
         num_ftrs = model.fc.in_features
         model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
