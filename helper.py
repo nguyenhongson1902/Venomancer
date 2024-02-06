@@ -123,12 +123,19 @@ class Helper:
         if self.params.save_model:
             logger.info(f"Saving model to {self.params.folder_path}.")
             model_name = '{0}/model_last.pt.tar'.format(self.params.folder_path) # save the last model
-            saved_dict = {'state_dict': model.state_dict(),
-                          'tgt_state_dict': tgtmodel.state_dict(),
-                          'epoch': epoch,
-                          'lr': self.params.lr,
-                          'params_dict': self.params.to_dict(),
-                          'eps': self.params.eps,}
+            if tgtmodel:
+                saved_dict = {'state_dict': model.state_dict(),
+                            'tgt_state_dict': tgtmodel.state_dict(),
+                            'epoch': epoch,
+                            'lr': self.params.lr,
+                            'params_dict': self.params.to_dict(),
+                            'eps': self.params.eps,}
+            else:
+                saved_dict = {'state_dict': model.state_dict(),
+                            'epoch': epoch,
+                            'lr': self.params.lr,
+                            'params_dict': self.params.to_dict(),
+                            'eps': self.params.eps,}
             if epoch == self.params.epochs:
                 logger.info(f'Saving model on the last epoch {epoch}')
                 self.save_checkpoint(saved_dict, False, model_name)
