@@ -937,6 +937,7 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
 
             # Calculus loss
             atkoutput = local_model(augmented_atkdata)
+            # atkoutput = atkoutput.logits # test with microsoft/resnet-50, remove this line for other models
             atkloss = hlpr.task.criterion(atkoutput, atktarget)
             atklosslist.append(sum(atkloss))
 
@@ -984,7 +985,9 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             augmented_data = data.clone()
 
             output = local_model(augmented_data)
+            # output = output.logits # test with microsoft/resnet-50, remove this line for other models
             atkoutput = local_model(augmented_atkdata.detach())
+            # atkoutput = atkoutput.logits # test with microsoft/resnet-50, remove this line for other models
             clean_loss = hlpr.task.criterion(output, target)
             cleanlosslist.append(sum(clean_loss))
             backdoor_loss = hlpr.task.criterion(atkoutput, atktarget)
@@ -1446,6 +1449,7 @@ def train(hlpr: Helper, local_epoch, local_model, local_optimizer, local_train_l
             augmented_data = data.clone()
 
             output = local_model(augmented_data)
+            # output = output.logits # test with microsoft/resnet-50, remove this line for other models
             loss = hlpr.task.criterion(output, target)
             cleanlosslist.append(sum(loss))
 
@@ -1483,6 +1487,8 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
             data, target = batch.inputs, batch.labels
             output = model(data)
             # print("output", output)
+            # output = output.logits # test with microsoft/resnet-50, remove this line for other models
+
             test_loss += hlpr.task.criterion(output, target).sum().item()
             pred = output.max(1, keepdim=True)[1]  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()
@@ -1501,7 +1507,7 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
                 # visual_diff = huber_loss(atkdata, data).sum(dim=(1,2,3))
 
                 atkoutput = model(atkdata)
-                # print("atkoutput", atkoutput)
+                # atkoutput = atkoutput.logits # test with microsoft/resnet-50, remove this line for other models
 
                 test_backdoor_loss += hlpr.task.criterion(atkoutput, atktarget).sum().item()
                 atkpred = atkoutput.max(1, keepdim=True)[1]  # get the index of the max log-probability
