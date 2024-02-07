@@ -11,6 +11,7 @@ import torchvision
 from torchvision.transforms import transforms
 from torchvision import models
 
+from transformers import ResNetForImageClassification
 # from models.simple import SimpleNet, NetC_MNIST
 from models.resnet_chestxray import ResNet18, ResNet50
 from tasks.task import Task
@@ -41,6 +42,7 @@ class ChestXRayDataset(Dataset):
     def __getitem__(self, idx):
         img_path, label = self.images[idx]
         img = Image.open(img_path).convert('L')  # Convert to grayscale
+        # img = Image.open(img_path).convert('RGB')  # Convert to RGB
         if self.transform:
             img = self.transform(img)
         return img, label
@@ -129,17 +131,17 @@ class ChestXRayTask(Task):
         #     transform=transform_train)
         # self.train_dataset = ImageFolder(root=os.path.join(images_folder, "train_images_11257"), transform=transform_train)
         
-        train_path = "./.data/dataset/train_images_11257"
-        test_path = "./.data/dataset/test_images_2252"
+        train_path = "./.data/dataset/train"
+        test_path = "./.data/dataset/test"
         transform_train = transforms.Compose([
             transforms.Resize((256, 256)),
-            transforms.Grayscale(num_output_channels=3),
+            # transforms.Grayscale(num_output_channels=3),
             # transforms.Resize((512, 512)),
             transforms.ToTensor(),
         ])
         transform_test = transforms.Compose([
             transforms.Resize((256, 256)),
-            transforms.Grayscale(num_output_channels=3),
+            # transforms.Grayscale(num_output_channels=3),
             # transforms.Resize((512, 512)),
             transforms.ToTensor(),
         ])
@@ -172,11 +174,15 @@ class ChestXRayTask(Task):
         return True
 
     def build_model(self):
-        # model = ResNet18()
-        print("Loading ResNet50 model")
-        model = models.resnet50(weights="ResNet50_Weights.DEFAULT")
-        num_ftrs = model.fc.in_features
-        model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
+        model = ResNet18()
+        # print("Loading pretrained ResNet50 model")
+        # model = models.resnet50(weights="ResNet50_Weights.DEFAULT")
+        # num_ftrs = model.fc.in_features
+        # model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
+
+        # model = ResNetForImageClassification.from_pretrained("microsoft/resnet-50")
+        # num_ftrs = model.classifier[1].in_features
+        # model.classifier[1] = torch.nn.Linear(num_ftrs, self.params.num_classes)
 
         return model
     
