@@ -327,6 +327,8 @@ def pick_best_atkmodel(hlpr, atkmodels_dict, round_participants, malicious_local
             atkdata, atktarget = make_backdoor_batch(hlpr, data, target, tgtmodel, target_transform, multitarget=True)
             atkoutput = local_model(atkdata)
 
+            # atkoutput = atkoutput.logits # test with microsoft/resnet-50, remove this line for other models
+            
             backdoor_loss += hlpr.task.criterion(atkoutput, atktarget).sum().item()
             atkpred = atkoutput.max(1, keepdim=True)[1]  # get the index of the max log-probability
             backdoor_correct += atkpred.eq(atktarget.view_as(atkpred)).sum().item()
