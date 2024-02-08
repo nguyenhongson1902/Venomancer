@@ -63,7 +63,10 @@ class ChestXRayTask(Task):
                 split = 1.0
                 all_range = list(range(int(len(self.train_dataset) * split)))
                 self.train_dataset = Subset(self.train_dataset, all_range)
-                indices_per_participant = self.sample_dirichlet_train_data(
+                # indices_per_participant = self.sample_dirichlet_train_data(
+                #     self.params.fl_total_participants,
+                #     alpha=self.params.fl_dirichlet_alpha)
+                indices_per_participant = self.sample_dirichlet_train_data_new(
                     self.params.fl_total_participants,
                     alpha=self.params.fl_dirichlet_alpha)
                 # print("DEBUG: ", [len(indices) for indices in indices_per_participant.values()])
@@ -71,7 +74,12 @@ class ChestXRayTask(Task):
                 #                  indices_per_participant.items()]
                 train_loaders, number_of_samples = zip(*[self.get_train(indices) for pos, indices in
                                 indices_per_participant.items()])
-                valid = 0 not in number_of_samples # If there is any client with 0 data, then resample
+                
+                valid = 0 not in number_of_samples
+                if not valid:
+                    print("Not valid")
+                else:
+                    print("Valid")
         else:
             # sample indices for participants that are equally
             # split = min(self.params.fl_total_participants / 20, 1)
