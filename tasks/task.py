@@ -328,7 +328,42 @@ class Task:
 
         return False
     
-    def sample_dirichlet_train_data(self, no_participants, alpha=0.9):
+    # def sample_dirichlet_train_data(self, no_participants, alpha=0.9):
+    #     """
+    #         Input: Number of participants and alpha (param for distribution)
+    #         Output: A list of indices denoting data in CIFAR training set.
+    #         Requires: dataset_classes, a preprocessed class-indices dictionary.
+    #         Sample Method: take a uniformly sampled 10-dimension vector as
+    #         parameters for
+    #         dirichlet distribution to sample number of images in each class.
+    #     """
+
+    #     dataset_classes = {}
+    #     for ind, x in enumerate(self.train_dataset):
+    #         _, label = x
+    #         if label in dataset_classes:
+    #             dataset_classes[label].append(ind)
+    #         else:
+    #             dataset_classes[label] = [ind]
+    #     class_size = len(dataset_classes[0])
+    #     per_participant_list = defaultdict(list)
+    #     no_classes = len(dataset_classes.keys())
+
+    #     for n in range(no_classes):
+    #         random.shuffle(dataset_classes[n])
+    #         sampled_probabilities = class_size * np.random.dirichlet(
+    #             np.array(no_participants * [alpha]))
+    #         for user in range(no_participants):
+    #             no_imgs = int(round(sampled_probabilities[user]))
+    #             sampled_list = dataset_classes[n][
+    #                            :min(len(dataset_classes[n]), no_imgs)]
+    #             per_participant_list[user].extend(sampled_list)
+    #             dataset_classes[n] = dataset_classes[n][
+    #                                min(len(dataset_classes[n]), no_imgs):]
+
+    #     return per_participant_list
+
+    def sample_dirichlet_train_data_new(self, no_participants, alpha=0.9):
         """
             Input: Number of participants and alpha (param for distribution)
             Output: A list of indices denoting data in CIFAR training set.
@@ -345,21 +380,29 @@ class Task:
                 dataset_classes[label].append(ind)
             else:
                 dataset_classes[label] = [ind]
-        class_size = len(dataset_classes[0])
         per_participant_list = defaultdict(list)
         no_classes = len(dataset_classes.keys())
 
-        for n in range(no_classes):
+        # Ensure each participant gets at least one image
+        for user in range(no_participants):
+            # Choose a random class
+            class_choice = random.choice(list(dataset_classes.keys()))
+            # Remove an image from the chosen class and assign it to the participant
+            per_participant_list[user].append(dataset_classes[class_choice].pop())
+            # If a class is empty, remove it from the dictionary
+            if len(dataset_classes[class_choice]) == 0:
+                del dataset_classes[class_choice]
+
+        # Distribute the remaining images
+        for n in list(dataset_classes.keys()):
             random.shuffle(dataset_classes[n])
-            sampled_probabilities = class_size * np.random.dirichlet(
+            sampled_probabilities = len(dataset_classes[n]) * np.random.dirichlet(
                 np.array(no_participants * [alpha]))
             for user in range(no_participants):
                 no_imgs = int(round(sampled_probabilities[user]))
-                sampled_list = dataset_classes[n][
-                               :min(len(dataset_classes[n]), no_imgs)]
+                sampled_list = dataset_classes[n][:min(len(dataset_classes[n]), no_imgs)]
                 per_participant_list[user].extend(sampled_list)
-                dataset_classes[n] = dataset_classes[n][
-                                   min(len(dataset_classes[n]), no_imgs):]
+                dataset_classes[n] = dataset_classes[n][min(len(dataset_classes[n]), no_imgs):]
 
         return per_participant_list
 
