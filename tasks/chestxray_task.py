@@ -185,12 +185,22 @@ class ChestXRayTask(Task):
         model = ResNet18()
         # print("Loading pretrained ResNet50 model")
         # model = models.resnet50(weights="ResNet50_Weights.DEFAULT")
+        # for params in model.parameters():
+        #     params.requires_grad = True
+        # num_ftrs = model.fc.in_features
+        # model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
+
+        # model = models.resnet18(weights="ResNet18_Weights.DEFAULT")
+        # for params in model.parameters():
+        #     params.requires_grad = False
         # num_ftrs = model.fc.in_features
         # model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
 
         # model = ResNetForImageClassification.from_pretrained("microsoft/resnet-50")
         # num_ftrs = model.classifier[1].in_features
         # model.classifier[1] = torch.nn.Linear(num_ftrs, self.params.num_classes)
+
+
 
         return model
     
