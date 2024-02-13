@@ -124,5 +124,11 @@ class TinyImageNetTask(Task):
                                       batch_size=self.params.test_batch_size,
                                       shuffle=False, num_workers=8)
 
+        self.classes = tuple(range(200))
+
+        self.clip_image = lambda x: torch.clamp(x, 0.0, 1.0)
+        self.target_transform = lambda x: torch.ones_like(x) * self.params.backdoor_label
+        return True
+    
     def build_model(self):
         return ResNet18()
