@@ -1,0 +1,128 @@
+import random
+
+import torchvision
+import torch
+from torch import nn
+from torch.utils.data import DataLoader
+from torchvision.transforms import transforms
+from torch.utils.data import Subset
+from torch.utils.data import Dataset
+
+from models.resnet_tinyimagenet import ResNet18
+from tasks.task import Task
+
+import os
+
+from utils.backdoor import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD, IMAGENET_MIN, IMAGENET_MAX
+from PIL import Image
+import pandas as pd
+
+
+class TinyImageNetDataset(Dataset):
+    def __init__(self, root_dir, mode='train', transform=None):
+        """
+        Args:
+            root_dir (string): Directory with 'train' and 'val' folders.
+            mode (string): 'train' or 'val' to specify which dataset to load.
+            transform (callable, optional): Optional transform to be applied on a sample.
+        """
+        assert mode in ['train', 'val'], "Mode must be either 'train' or 'val'"
+
+        self.root_dir = root_dir
+        self.mode = mode
+        self.transform = transform
+        self.classes = sorted(os.listdir(os.path.join(root_dir, "train")))
+        self.class_to_idx = {cls: idx for idx, cls in enumerate(self.classes)}
+        self.images = self.get_images()
+
+    def get_images(self):
+        images = []
+        if self.mode == "train":
+            data_dir = os.path.join(self.root_dir, 'train')
+            for dir in os.listdir(data_dir):
+                images_path = os.path.join(data_dir, dir, "images")
+                for filename in os.listdir(images_path):
+                    file_path = os.path.join(images_path, filename)
+                    images.append((file_path, self.class_to_idx[dir]))
+        elif self.mode == "val":
+            annotations_file = os.path.join(self.root_dir, "val", "val_annotations.txt")
+            annotations = pd.read_csv(annotations_file, sep='\t', header=None)
+            annotations.columns = ['filename', 'class_name', '_', '_', '_', '_']
+            for i in range(len(annotations)):
+                filename = annotations.iloc[i]['filename']
+                class_name = annotations.iloc[i]['class_name']
+                file_path = os.path.join(self.root_dir, "val", "images", filename)
+                images.append((file_path, self.class_to_idx[class_name]))
+        return images
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        img_path, label = self.images[idx]
+
+        image = Image.open(img_path).convert('RGB')
+
+        if self.transform:
+            image = self.transform(image)
+
+        return image, label
+
+
+class TinyImageNetTask(Task):
+
+    def load_data(self):
+        self.load_tinyimagenet_data()
+        if self.params.fl_sample_dirichlet:
+            # sample indices for participants using Dirichlet distribution
+            # split = min(self.params.fl_total_participants / 100, 1)
+            split = 1.0
+            all_range = list(range(int(len(self.train_dataset) * split)))
+            self.train_dataset = Subset(self.train_dataset, all_range)
+            indices_per_participant = self.sample_dirichlet_train_data(
+                self.params.fl_total_participants,
+                alpha=self.params.fl_dirichlet_alpha)
+            # train_loaders = [self.get_train(indices) for pos, indices in
+            #                  indices_per_participant.items()]
+            train_loaders, number_of_samples = zip(*[self.get_train(indices) for pos, indices in
+                                                    indices_per_participant.items()])
+        else:
+            # sample indices for participants that are equally
+            # split to 500 images per participant
+            # split = min(self.params.fl_total_participants / 100, 1)
+            split = 1.0
+            all_range = list(range(int(len(self.train_dataset) * split)))
+            self.train_dataset = Subset(self.train_dataset, all_range)
+            random.shuffle(all_range)
+            # train_loaders = [self.get_train_old(all_range, pos)
+            #                  for pos in
+            #                  range(self.params.fl_total_participants)]
+            train_loaders, number_of_samples = zip(*[self.get_train_old(all_range, pos) for pos in
+                                range(self.params.fl_total_participants)])
+        self.fl_train_loaders = train_loaders
+        self.fl_number_of_samples = number_of_samples
+        return
+
+    def load_tinyimagenet_data(self):
+
+        train_transform = transforms.Compose([
+            transforms.ToTensor(),
+        ])
+        test_transform = transforms.Compose([
+            transforms.ToTensor(),
+        ])
+
+        root_dir = "./.data/tiny-imagenet-200"
+        self.train_dataset = TinyImageNetDataset(root_dir=root_dir, mode="train", transform=train_transform)
+        self.test_dataset = TinyImageNetDataset(root_dir=root_dir, mode="val", transform=test_transform)
+
+
+        self.train_loader = DataLoader(self.train_dataset,
+                                       batch_size=self.params.batch_size,
+                                       shuffle=True, num_workers=0)
+        self.test_loader = DataLoader(self.test_dataset,
+                                      batch_size=self.params.test_batch_size,
+                                      shuffle=False, num_workers=8)
+
+    def build_model(self):
+        return ResNet18()
