@@ -65,6 +65,7 @@ class Bottleneck(nn.Module):
 
 
 class ResNet(SimpleNet):
+    ## TODO: Set ResNet18 architecture to be the same with resnet mnist, resnet tinyimagenet
     def __init__(self, block, num_blocks, num_classes=10, name=None, created_time=None):
         super(ResNet, self).__init__(name, created_time)
         self.in_planes = 32
