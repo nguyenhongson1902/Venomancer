@@ -328,42 +328,42 @@ class Task:
 
         return False
     
-    # def sample_dirichlet_train_data(self, no_participants, alpha=0.9):
-    #     """
-    #         Input: Number of participants and alpha (param for distribution)
-    #         Output: A list of indices denoting data in CIFAR training set.
-    #         Requires: dataset_classes, a preprocessed class-indices dictionary.
-    #         Sample Method: take a uniformly sampled 10-dimension vector as
-    #         parameters for
-    #         dirichlet distribution to sample number of images in each class.
-    #     """
+    def sample_dirichlet_train_data(self, no_participants, alpha=0.9):
+        """
+            Input: Number of participants and alpha (param for distribution)
+            Output: A list of indices denoting data in CIFAR training set.
+            Requires: dataset_classes, a preprocessed class-indices dictionary.
+            Sample Method: take a uniformly sampled 10-dimension vector as
+            parameters for
+            dirichlet distribution to sample number of images in each class.
+        """
 
-    #     dataset_classes = {}
-    #     for ind, x in enumerate(self.train_dataset):
-    #         _, label = x
-    #         if label in dataset_classes:
-    #             dataset_classes[label].append(ind)
-    #         else:
-    #             dataset_classes[label] = [ind]
-    #     class_size = len(dataset_classes[0])
-    #     per_participant_list = defaultdict(list)
-    #     no_classes = len(dataset_classes.keys())
+        dataset_classes = {}
+        for ind, x in enumerate(self.train_dataset):
+            _, label = x
+            if label in dataset_classes:
+                dataset_classes[label].append(ind)
+            else:
+                dataset_classes[label] = [ind]
+        class_size = len(dataset_classes[0])
+        per_participant_list = defaultdict(list)
+        no_classes = len(dataset_classes.keys())
 
-    #     for n in range(no_classes):
-    #         random.shuffle(dataset_classes[n])
-    #         sampled_probabilities = class_size * np.random.dirichlet(
-    #             np.array(no_participants * [alpha]))
-    #         for user in range(no_participants):
-    #             no_imgs = int(round(sampled_probabilities[user]))
-    #             sampled_list = dataset_classes[n][
-    #                            :min(len(dataset_classes[n]), no_imgs)]
-    #             per_participant_list[user].extend(sampled_list)
-    #             dataset_classes[n] = dataset_classes[n][
-    #                                min(len(dataset_classes[n]), no_imgs):]
+        for n in range(no_classes):
+            random.shuffle(dataset_classes[n])
+            sampled_probabilities = class_size * np.random.dirichlet(
+                np.array(no_participants * [alpha]))
+            for user in range(no_participants):
+                no_imgs = int(round(sampled_probabilities[user]))
+                sampled_list = dataset_classes[n][
+                               :min(len(dataset_classes[n]), no_imgs)]
+                per_participant_list[user].extend(sampled_list)
+                dataset_classes[n] = dataset_classes[n][
+                                   min(len(dataset_classes[n]), no_imgs):]
 
-    #     return per_participant_list
+        return per_participant_list
 
-    def sample_dirichlet_train_data_new(self, no_participants, alpha=0.9):
+    def sample_dirichlet_train_data_new(self, no_participants, alpha=0.9): # for chestxray
         """
             Input: Number of participants and alpha (param for distribution)
             Output: A list of indices denoting data in CIFAR training set.
