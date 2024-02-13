@@ -1,0 +1,76 @@
+task: TinyImageNet
+synthesizer: Pattern
+
+
+batch_size: 32
+test_batch_size: 64
+lr: 0.001
+momentum: 0.9
+decay: 0.0005
+epochs: 1000
+poison_epoch: 1
+poison_epoch_stop: 1000
+save_on_epochs: [25, 50, 100, 150, 175, 200, 225, 250, 300, 400, 500, 700, 900, 1000, 1200, 1500, 1700, 1900, 2500, 3000, 4500, 5000, 5500] # [100, 200, 400, 500, 700, 900]
+optimizer: SGD
+log_interval: 100
+device: cuda
+
+poisoning_proportion: 0.3
+backdoor_label: 8
+
+resume_model: # there're no models now
+prefix: ./hdd/home/ssd_data/Son/Venomancer/
+
+save_model: True
+log: True
+# report_train_loss: False
+
+transform_train: True
+
+fl: True
+fl_no_models: 10
+fl_local_epochs: 2
+fl_poison_epochs: 5
+fl_total_participants: 100
+fl_eta: 1
+fl_sample_dirichlet: True
+fl_dirichlet_alpha: 0.5
+
+fl_number_of_adversaries: 2
+# fl_number_of_scapegoats: 0
+fl_weight_scale: 1
+fl_adv_group_size: 2
+# fl_single_epoch_attack: 10
+
+attack: ModelReplace
+defense: FedAvg # Krum, Weak_DP, Norm_Clipping, FLAME, Deepsight, Foolsgold, FLDetector, RFLBAT, FedAvg
+fl_num_neurons: 100
+noise_mask_alpha: 0 # 0.5
+lagrange_step: 0.1
+
+# Marksman Settings
+clsmodel: resnet18
+lr_atk: 0.0002
+eps: 0.01 # epsilon for data poisoning, deprecated
+# target_label: [8,8,8,8]
+num_classes: 200
+attack_portion: 1.0
+alpha: 0.5
+beta: 0.01
+test_n_size: 10
+input_height: 64
+input_width: 64
+input_channel: 3
+random_rotation: 10
+random_crop: 5
+dataset: tinyimagenet
+mode: all2one
+fixed_frequency: 1
+gradmask_ratio: 0.95
+# normal_training: False # False means only training benign clients, True means training malicious (if any) and benign clients
+# only_target_examples: False # False means get randomly examples from the original dataset, True means get only the target examples
+# multiplier: 1
+
+norm_bound: 3.0 # weight diff clipping defense
+stddev: 0.002 # for weak_dp defense
+mode_krum: multi_krum # for krum defense
