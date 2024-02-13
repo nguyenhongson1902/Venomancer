@@ -1,3 +1,5 @@
+# https://nihcc.app.box.com/v/ChestXray-NIHCC
+
 import pandas as pd
 from collections import Counter
 import random
