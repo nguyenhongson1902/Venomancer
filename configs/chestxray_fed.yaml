@@ -50,7 +50,7 @@ noise_mask_alpha: 0 # 0.5
 lagrange_step: 0.1
 
 # Marksman Settings
-clsmodel: resnet50
+clsmodel: resnet18
 lr_atk: 0.0002
 eps: 0.01 # epsilon for data poisoning, deprecated
 # target_label: [8,8,8,8]
