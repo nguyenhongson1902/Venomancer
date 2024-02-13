@@ -562,17 +562,17 @@ class Task:
             n_classes = self.params.num_classes
             
             # atkmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
-            atkmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            # atkmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device) # tinyimagenet
             # atkmodel = ChestXRayConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
-            # atkmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device)
+            atkmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device) # tinyimagenet
             # atkmodel = ConditionalUNet(n_classes, input_dim, 1).to(self.params.device) # chestxray
             # atkmodel = Autoencoder().to(self.params.device)
             # atkmodel = UNet(3).to(self.params.device)
 
             # tgtmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
-            tgtmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            # tgtmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device) # tinyimagenet
             # tgtmodel = ChestXRayConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
-            # tgtmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device)
+            tgtmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device) # tinyimagenet
             # tgtmodel = ConditionalUNet(n_classes, input_dim, 1).to(self.params.device) # chestxray
             # tgtmodel = Autoencoder().to(self.params.device)
             # tgtmodel = UNet(3).to(self.params.device)
