@@ -5,7 +5,6 @@ import torch
 import torch.nn as nn
 from torch.utils.data import Subset
 from torch.utils.data import Dataset
-import torch.utils.data as torch_data
 from torchvision.datasets import ImageFolder
 import torchvision
 from torchvision.transforms import transforms
@@ -157,9 +156,9 @@ class ChestXRayTask(Task):
         ])
         
         self.train_dataset = ChestXRayDataset(root_folder=train_path, transform=transform_train)
-        self.train_loader = torch_data.DataLoader(self.train_dataset, batch_size=self.params.batch_size, shuffle=True, num_workers=0)
+        self.train_loader = torch.utils.data.DataLoader(self.train_dataset, batch_size=self.params.batch_size, shuffle=True, num_workers=0)
 
-        # self.train_loader = torch_data.DataLoader(self.train_dataset,
+        # self.train_loader = torch.utils.data.DataLoader(self.train_dataset,
         #                                           batch_size=self.params.batch_size,
         #                                           shuffle=True,
         #                                           num_workers=0)
@@ -171,9 +170,9 @@ class ChestXRayTask(Task):
         # self.test_dataset = ImageFolder(root=os.path.join(images_folder, "test_images_2252"), transform=transform_test)
         
         self.test_dataset = ChestXRayDataset(root_folder=test_path, transform=transform_test)
-        self.test_loader = torch_data.DataLoader(self.test_dataset, batch_size=self.params.test_batch_size, shuffle=False, num_workers=0)
+        self.test_loader = torch.utils.data.DataLoader(self.test_dataset, batch_size=self.params.test_batch_size, shuffle=False, num_workers=0)
 
-        # self.test_loader = torch_data.DataLoader(self.test_dataset,
+        # self.test_loader = torch.utils.data.DataLoader(self.test_dataset,
         #                                          batch_size=self.params.test_batch_size,
         #                                          shuffle=False,
         #                                          num_workers=0)
