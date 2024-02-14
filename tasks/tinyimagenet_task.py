@@ -39,11 +39,11 @@ class TinyImageNetDataset(Dataset):
         images = []
         if self.mode == "train":
             data_dir = os.path.join(self.root_dir, 'train')
-            for dir in os.listdir(data_dir):
-                images_path = os.path.join(data_dir, dir, "images")
+            for dir_name in os.listdir(data_dir):
+                images_path = os.path.join(data_dir, dir_name, "images")
                 for filename in os.listdir(images_path):
                     file_path = os.path.join(images_path, filename)
-                    images.append((file_path, self.class_to_idx[dir]))
+                    images.append((file_path, self.class_to_idx[dir_name]))
         elif self.mode == "val":
             annotations_file = os.path.join(self.root_dir, "val", "val_annotations.txt")
             annotations = pd.read_csv(annotations_file, sep='\t', header=None)
@@ -122,7 +122,7 @@ class TinyImageNetTask(Task):
                                        shuffle=True, num_workers=0)
         self.test_loader = DataLoader(self.test_dataset,
                                       batch_size=self.params.test_batch_size,
-                                      shuffle=False, num_workers=8)
+                                      shuffle=False, num_workers=0)
 
         self.classes = tuple(range(200))
 
@@ -131,4 +131,13 @@ class TinyImageNetTask(Task):
         return True
     
     def build_model(self):
-        return ResNet18()
+        # model = ResNet18() # from scratch
+
+        model = ResNet18().to(self.params.device)
+        path = "/hdd/home/ssd_data/Son/Venomancer/saved_models/model_TinyImageNet_02.14_22.06.32_tinyimagenet/model_epoch_25.pt.tar"
+        with open(path, "rb") as f:
+            checkpoint = torch.load(f, map_location=self.params.device)
+            model.load_state_dict(checkpoint["state_dict"])
+            print("Successfully loaded pretrained weights from epoch 25 for ResNet18")
+
+        return model
