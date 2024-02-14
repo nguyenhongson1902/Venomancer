@@ -595,3 +595,19 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 
 Experiment 150: (lab, fl_sample_dirichlet True, resnet18, images (3, 64, 64), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 64, 3), train like a gan with visual loss, 2/10 adversary)
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp150/"$mytime && python training.py --name tinyimagenet --params configs/tinyimagenet_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp150/"$mytime"/logs.txt"
+
+Experiment 151: (lab, dirichlet alpha=0.01, fl_sample_dirichlet True, resnet18, images (3, 64, 64), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 64, 3), train like a gan with visual loss, 2/10 adversary)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp151/"$mytime && python training.py --name tinyimagenet --params configs/tinyimagenet_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp151/"$mytime"/logs.txt"
+
+Experiment 152: (lab, dirichlet alpha=0.9, fl_sample_dirichlet True, resnet18, images (3, 64, 64), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 64, 3), train like a gan with visual loss, 2/10 adversary)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp152/"$mytime && python training.py --name tinyimagenet --params configs/tinyimagenet_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp152/"$mytime"/logs.txt"
+
+# Experiment 153: (lab, dirichlet alpha=0.01, fl_sample_dirichlet True, resnet18, images (3, 64, 64), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 64, 3), train like a gan with visual loss, 2/10 adversary)
+# export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp153/"$mytime && python training.py --name tinyimagenet --params configs/tinyimagenet_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp153/"$mytime"/logs.txt"
+
+Experiment 154: (lab, centralized, dirichlet alpha=0.01, fl_sample_dirichlet True, resnet18, images (3, 64, 64), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 64, 3), train like a gan with visual loss, 0/10 adversary)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp154/"$mytime && python training.py --name tinyimagenet --params configs/tinyimagenet_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp154/"$mytime"/logs.txt"
+
+Experiment 155: (lab, dirichlet alpha=0.01, fl_sample_dirichlet True, pretrained weights resnet18 from epoch 25, images (3, 64, 64), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 64, 3), train like a gan with visual loss, 2/10 adversary)
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp155/"$mytime && python training.py --name tinyimagenet --params configs/tinyimagenet_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp155/"$mytime"/logs.txt"
+
