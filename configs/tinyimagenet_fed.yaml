@@ -2,8 +2,8 @@ task: TinyImageNet
 synthesizer: Pattern
 
 
-batch_size: 16
-test_batch_size: 32
+batch_size: 8
+test_batch_size: 16
 lr: 0.001
 momentum: 0.9
 decay: 0.0005
