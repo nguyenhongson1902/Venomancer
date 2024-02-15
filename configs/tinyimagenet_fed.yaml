@@ -2,8 +2,8 @@ task: TinyImageNet
 synthesizer: Pattern
 
 
-batch_size: 32
-test_batch_size: 64
+batch_size: 16
+test_batch_size: 32
 lr: 0.001
 momentum: 0.9
 decay: 0.0005
@@ -58,8 +58,8 @@ attack_portion: 1.0
 alpha: 0.5
 beta: 0.01
 test_n_size: 10
-input_height: 64
-input_width: 64
+input_height: 224
+input_width: 224
 input_channel: 3
 random_rotation: 10
 random_crop: 5
