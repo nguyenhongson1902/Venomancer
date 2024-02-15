@@ -617,6 +617,6 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 Experiment 157: (lab, lr=0.01, dirichlet alpha=0.01, fl_sample_dirichlet True, resnet18 from sratch, images (3, 64, 64), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 64, 3), train like a gan with visual loss, 2/10 adversary)
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp157/"$mytime && python training.py --name tinyimagenet --params configs/tinyimagenet_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp157/"$mytime"/logs.txt"
 
-Experiment 158: (lab, dirichlet alpha=0.01, fl_sample_dirichlet True, resnet18 from sratch, images (3, 224, 224), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 224, 3), train like a gan with visual loss, 2/10 adversary)
+Experiment 158: (lab, dirichlet alpha=0.01, fl_sample_dirichlet True, resnet18 from sratch, images (3, 256, 256), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 256, 3), train like a gan with visual loss, 2/10 adversary)
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp158/"$mytime && python training.py --name tinyimagenet --params configs/tinyimagenet_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp158/"$mytime"/logs.txt"
 
