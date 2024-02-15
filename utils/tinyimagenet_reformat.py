@@ -18,7 +18,7 @@ paths = glob.glob(target_folder + 'images/*')
 paths[0].split('/')[-1]
 for path in paths:
     file = path.split('/')[-1]
-    file = file.split('\\')[-1]
+    # file = file.split('\\')[-1]
     folder = val_dict[file]
     if not os.path.exists(target_folder + str(folder)):
         os.mkdir(target_folder + str(folder))
