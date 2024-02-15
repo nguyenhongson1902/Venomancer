@@ -9,6 +9,7 @@ from torch.utils.data import Subset
 from torch.utils.data import Dataset
 
 from models.resnet_tinyimagenet import ResNet18
+from torchvision import models
 from tasks.task import Task
 
 import os
@@ -106,9 +107,11 @@ class TinyImageNetTask(Task):
     def load_tinyimagenet_data(self):
 
         train_transform = transforms.Compose([
+            transforms.Resize((224,224)),
             transforms.ToTensor(),
         ])
         test_transform = transforms.Compose([
+            transforms.Resize((224,224)),
             transforms.ToTensor(),
         ])
 
@@ -131,13 +134,20 @@ class TinyImageNetTask(Task):
         return True
     
     def build_model(self):
-        # model = ResNet18() # from scratch
+        model = ResNet18() # from scratch
 
-        model = ResNet18().to(self.params.device)
-        path = "/hdd/home/ssd_data/Son/Venomancer/saved_models/model_TinyImageNet_02.14_22.06.32_tinyimagenet/model_epoch_25.pt.tar"
-        with open(path, "rb") as f:
-            checkpoint = torch.load(f, map_location=self.params.device)
-            model.load_state_dict(checkpoint["state_dict"])
-            print("Successfully loaded pretrained weights from epoch 25 for ResNet18")
+        # model = ResNet18().to(self.params.device)
+        # path = "/hdd/home/ssd_data/Son/Venomancer/saved_models/model_TinyImageNet_02.14_22.06.32_tinyimagenet/model_epoch_25.pt.tar"
+        # with open(path, "rb") as f:
+        #     checkpoint = torch.load(f, map_location=self.params.device)
+        #     model.load_state_dict(checkpoint["state_dict"])
+        #     print("Successfully loaded pretrained weights from epoch 25 for ResNet18")
+        
+        # model = models.resnet18(weights="ResNet18_Weights.DEFAULT")
+        # for params in model.parameters():
+        #     params.requires_grad = False
+        # num_ftrs = model.fc.in_features
+        # model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
+        # print("Successfully loaded pretrained weights PyTorch (ImageNet)")
 
         return model
