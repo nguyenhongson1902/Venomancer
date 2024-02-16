@@ -178,3 +178,4 @@ test_gan.ipynb
 test.py
 infer.ipynb
 hdd/
+pretrained/
