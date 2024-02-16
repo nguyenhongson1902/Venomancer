@@ -7,8 +7,10 @@ from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 from torch.utils.data import Subset
 from torch.utils.data import Dataset
+from torchvision.datasets import ImageFolder
 
 from models.resnet_tinyimagenet import ResNet18
+from models.resnet_tinyimagenet_dba import resnet18 as resnet18_dba
 from torchvision import models
 from tasks.task import Task
 
@@ -115,9 +117,14 @@ class TinyImageNetTask(Task):
             transforms.ToTensor(),
         ])
 
+        # dset = {x : torchvision.datasets.ImageFolder(path+x, transform=transformers[y]) for x,y in zip(categories, trans)}
         root_dir = "./.data/tiny-imagenet-200"
-        self.train_dataset = TinyImageNetDataset(root_dir=root_dir, mode="train", transform=train_transform)
-        self.test_dataset = TinyImageNetDataset(root_dir=root_dir, mode="val", transform=test_transform)
+        # self.train_dataset = TinyImageNetDataset(root_dir=root_dir, mode="train", transform=train_transform)
+        # self.test_dataset = TinyImageNetDataset(root_dir=root_dir, mode="val", transform=test_transform)
+
+        self.train_dataset = ImageFolder(root=os.path.join(root_dir, "train"), transform=train_transform)
+        self.test_dataset = ImageFolder(root=os.path.join(root_dir, "val"), transform=test_transform)
+
 
 
         self.train_loader = DataLoader(self.train_dataset,
@@ -143,11 +150,25 @@ class TinyImageNetTask(Task):
         #     model.load_state_dict(checkpoint["state_dict"])
         #     print("Successfully loaded pretrained weights from epoch 25 for ResNet18")
         
-        model = models.resnet18(weights="ResNet18_Weights.DEFAULT")
-        for params in model.parameters():
-            params.requires_grad = True
-        num_ftrs = model.fc.in_features
-        model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
-        print("Successfully loaded pretrained weights PyTorch (ImageNet)")
+        # model = models.resnet18(weights="ResNet18_Weights.DEFAULT")
+        # for params in model.parameters():
+        #     params.requires_grad = True
+        # num_ftrs = model.fc.in_features
+        # model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
+        # print("Successfully loaded pretrained weights PyTorch (ImageNet)")
+
+        # model = models.resnet18(weights=None)
+        # for params in model.parameters():
+        #     params.requires_grad = True
+        # num_ftrs = model.fc.in_features
+        # model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
+        # print("Using resnet18 available in PyTorch, train from scratch")
+
+        model = resnet18_dba().to('cuda')
+        path = "/disk/ssd_data/Son/Venomancer/pretrained/saved_models/tiny_64_pretrain/tiny-resnet.epoch_20"
+        with open(path, "rb") as f:
+            checkpoint = torch.load(f, map_location="cuda")
+            model.load_state_dict(checkpoint['state_dict'])
+        print("Using pretrained weights resnet18 from DBA")
 
         return model
