@@ -469,7 +469,7 @@ class Task:
     def get_atkmodel(self):
         if self.params.task.lower() == 'cifar10':
             from attack_models.autoencoders import ConditionalAutoencoder, Autoencoder, MNISTConditionalAutoencoder
-            from attack_models.unet import UNet
+            from attack_models.unet import UNet, ConditionalUNet
 
             input_dim = self.params.input_shape[1]
             n_classes = self.params.num_classes
@@ -483,14 +483,16 @@ class Task:
             
             # atkmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
             # atkmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
-            atkmodel = MNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            atkmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device)
+            # atkmodel = MNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             # atkmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
             # atkmodel = Autoencoder().to(self.params.device)
             # atkmodel = UNet(3).to(self.params.device)
 
             # tgtmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
             # tgtmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
-            tgtmodel = MNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            tgtmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device)
+            # tgtmodel = MNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             # tgtmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
             # tgtmodel = Autoencoder().to(self.params.device)
             # tgtmodel = UNet(3).to(self.params.device)
