@@ -6,7 +6,8 @@ from torch.utils.data import Subset
 from torchvision.transforms import transforms
 
 # from models.resnet import resnet18
-from models.resnet_cifar import ResNet18
+from models.resnet_cifar import ResNet18 as ResNet18_v1
+from models.resnet_cifar_v2 import ResNet18 as ResNet18_v2
 from tasks.task import Task
 
 from utils.backdoor import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD, IMAGENET_MIN, IMAGENET_MAX
@@ -136,6 +137,6 @@ class CIFAR10Task(Task):
         #     checkpoint = torch.load(f, map_location="cuda")
         #     model.load_state_dict(checkpoint["state_dict"])
 
-        model = ResNet18()
+        model = ResNet18_v2()
 
         return model
