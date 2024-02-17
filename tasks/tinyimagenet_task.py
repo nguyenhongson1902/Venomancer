@@ -109,11 +109,11 @@ class TinyImageNetTask(Task):
     def load_tinyimagenet_data(self):
 
         train_transform = transforms.Compose([
-            # transforms.Resize((256,256)),
+            transforms.Resize((256,256)),
             transforms.ToTensor(),
         ])
         test_transform = transforms.Compose([
-            # transforms.Resize((256,256)),
+            transforms.Resize((256,256)),
             transforms.ToTensor(),
         ])
 
