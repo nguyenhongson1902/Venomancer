@@ -482,16 +482,16 @@ class Task:
                         ])
             
             # atkmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
-            atkmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
-            # atkmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device)
+            # atkmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            atkmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device)
             # atkmodel = MNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             # atkmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
             # atkmodel = Autoencoder().to(self.params.device)
             # atkmodel = UNet(3).to(self.params.device)
 
             # tgtmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
-            tgtmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
-            # tgtmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device)
+            # tgtmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            tgtmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device)
             # tgtmodel = MNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             # tgtmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
             # tgtmodel = Autoencoder().to(self.params.device)
@@ -504,21 +504,23 @@ class Task:
             return atkmodel, tgtmodel, tgtoptimizer
         elif self.params.task.lower() == 'mnist':
             from attack_models.autoencoders import MNISTConditionalAutoencoder
-            from attack_models.unet import UNet
+            from attack_models.unet import UNet, MNISTConditionalUNet
 
             input_dim = self.params.input_shape[1]
             n_classes = self.params.num_classes
             
             # atkmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
             # atkmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
-            atkmodel = MNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            # atkmodel = MNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            atkmodel = MNISTConditionalUNet(n_classes, input_dim, 1).to(self.params.device)
             # atkmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
             # atkmodel = Autoencoder().to(self.params.device)
             # atkmodel = UNet(3).to(self.params.device)
 
             # tgtmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
             # tgtmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
-            tgtmodel = MNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            # tgtmodel = MNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            tgtmodel = MNISTConditionalUNet(n_classes, input_dim, 1).to(self.params.device)
             # tgtmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
             # tgtmodel = Autoencoder().to(self.params.device)
             # tgtmodel = UNet(3).to(self.params.device)
@@ -530,7 +532,7 @@ class Task:
             return atkmodel, tgtmodel, tgtoptimizer
         elif self.params.task.lower() == 'chestxray':
             from attack_models.autoencoders import ChestXRayConditionalAutoencoder, ConditionalAutoencoder
-            from attack_models.unet import UNet, ConditionalUNet
+            from attack_models.unet import UNet, ConditionalUNet, ChestXRayConditionalUNet
 
             input_dim = self.params.input_shape[1]
             n_classes = self.params.num_classes
@@ -539,7 +541,8 @@ class Task:
             # atkmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             # atkmodel = ChestXRayConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             # atkmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device)
-            atkmodel = ConditionalUNet(n_classes, input_dim, 1).to(self.params.device) # chestxray
+            # atkmodel = ConditionalUNet(n_classes, input_dim, 1).to(self.params.desvice) # chestxray
+            atkmodel = ChestXRayConditionalUNet(n_classes, input_dim, 1).to(self.params.device) # chestxray
             # atkmodel = Autoencoder().to(self.params.device)
             # atkmodel = UNet(3).to(self.params.device)
 
@@ -547,7 +550,8 @@ class Task:
             # tgtmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             # tgtmodel = ChestXRayConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             # tgtmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device)
-            tgtmodel = ConditionalUNet(n_classes, input_dim, 1).to(self.params.device) # chestxray
+            # tgtmodel = ConditionalUNet(n_classes, input_dim, 1).to(self.params.device) # chestxray
+            tgtmodel = ChestXRayConditionalUNet(n_classes, input_dim, 1).to(self.params.device) # chestxray
             # tgtmodel = Autoencoder().to(self.params.device)
             # tgtmodel = UNet(3).to(self.params.device)
             tgtmodel.load_state_dict(atkmodel.state_dict(), strict=True)
@@ -576,6 +580,34 @@ class Task:
             # tgtmodel = ChestXRayConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             tgtmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device) # tinyimagenet
             # tgtmodel = ConditionalUNet(n_classes, input_dim, 1).to(self.params.device) # chestxray
+            # tgtmodel = Autoencoder().to(self.params.device)
+            # tgtmodel = UNet(3).to(self.params.device)
+            tgtmodel.load_state_dict(atkmodel.state_dict(), strict=True)
+
+            # tgtoptimizer = torch.optim.Adam(tgtmodel.parameters(), lr=self.params.lr_atk)
+            tgtoptimizer = torch.optim.Adam(tgtmodel.parameters(), lr=self.params.lr_atk, betas=(0.5, 0.999)) # Starts from exp67
+
+            return atkmodel, tgtmodel, tgtoptimizer
+        elif self.params.task.lower() == 'fashionmnist':
+            from attack_models.autoencoders import FashionMNISTConditionalAutoencoder
+            from attack_models.unet import UNet, FashionMNISTConditionalUNet
+
+            input_dim = self.params.input_shape[1]
+            n_classes = self.params.num_classes
+            
+            # atkmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
+            # atkmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            # atkmodel = FashionMNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            atkmodel = FashionMNISTConditionalUNet(n_classes, input_dim, 1).to(self.params.device)
+            # atkmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
+            # atkmodel = Autoencoder().to(self.params.device)
+            # atkmodel = UNet(3).to(self.params.device)
+
+            # tgtmodel = ConditionalAutoencoder(n_classes, input_dim, pattern_tensor).to(self.params.device)
+            # tgtmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            # tgtmodel = FashionMNISTConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
+            tgtmodel = FashionMNISTConditionalUNet(n_classes, input_dim, 1).to(self.params.device)
+            # tgtmodel = UNet(n_classes, input_dim, 3).to(self.params.device)
             # tgtmodel = Autoencoder().to(self.params.device)
             # tgtmodel = UNet(3).to(self.params.device)
             tgtmodel.load_state_dict(atkmodel.state_dict(), strict=True)
