@@ -1531,7 +1531,8 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
     # print("class_accuracies", class_accuracies)
     # print("class_counts", class_counts)
     for tar, cor in class_accuracies.items():
-        class_accuracies[tar] = cor / class_counts[tar]
+        if class_counts[tar] != 0:
+            class_accuracies[tar] = cor / class_counts[tar]
 
     if atkmodel:
         test_backdoor_loss /= len(hlpr.task.test_loader.dataset)
