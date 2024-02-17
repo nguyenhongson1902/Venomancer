@@ -509,7 +509,7 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 Experiment 162: resnet18_v2 from scratch, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp162/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp162/"$mytime"/logs.txt"
 
-Experiment 163: resnet18_v2 from scratch, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
+Experiment 163: vishc, resnet18_v2 from scratch, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp163/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp163/"$mytime"/logs.txt"
 
 Experiment 164: pretrained resnet18 DBA, , beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
@@ -517,6 +517,9 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 
 Experiment 165: pretrained resnet18 DBA, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp165/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp165/"$mytime"/logs.txt"
+
+Experiment 170: Compare 163, lab, resnet18_v2 from scratch, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp170/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime > $(pwd)"/experiments/exp170/"$mytime"/logs.txt"
 
 ----------------------------------MNIST----------------------------------
 Experiment 122: (beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, mnistconditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary)
@@ -551,6 +554,12 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 
 Experiment 132: (beta=1, fedavg, fixed_frequency 1, poison 1-1000, mnistconditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary)
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp132/"$mytime && python training.py --name mnist --params configs/mnist_fed.yaml --time $mytime > $(pwd)"/experiments/exp132/"$mytime"/logs.txt"
+
+Experiment 171: resnet18 fix conv0 padding, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, mnistconditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp171/"$mytime && python training.py --name mnist --params configs/mnist_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp171/"$mytime"/logs.txt"
+
+Experiment 172: resnet18 fix conv0 padding, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, mnistconditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp172/"$mytime && python training.py --name mnist --params configs/mnist_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp172/"$mytime"/logs.txt"
 
 ----------------------------------ChestXRay14 (Subset)----------------------------------
 Experiment 133: (lab, imagesize 256, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, chestxray14autoencoder, multitarget, train like a gan with visual loss, 2/10 adversary)
@@ -641,6 +650,15 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 Experiment 161: (lab, dirichlet alpha=0.01, fl_sample_dirichlet True, resnet18 DBA pretrained weights, images (3, 256, 256), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 256, 3), train like a gan with visual loss, 2/10 adversary)
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp161/"$mytime && python training.py --name tinyimagenet --params configs/tinyimagenet_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp161/"$mytime"/logs.txt"
 
-Experiment 166: (cecs, dirichlet alpha=0.5, fl_sample_dirichlet True, resnet18 DBA pretrained weights, images (3, 256, 256), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 256, 3), train like a gan with visual loss, 2/10 adversary)
+Experiment 166: cecs, dirichlet alpha=0.5, fl_sample_dirichlet True, resnet18 DBA pretrained weights, images (3, 256, 256), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 256, 3), train like a gan with visual loss, 2/10 adversary
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp166/"$mytime && python training.py --name tinyimagenet --params configs/tinyimagenet_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp166/"$mytime"/logs.txt"
 
+Experiment 167: cecs, dirichlet alpha=0.5, fl_sample_dirichlet True, resnet18 DBA pretrained weights, images (3, 64, 64), custom dataset, beta=0.01, fedavg, ConditionalUNet(200, 64, 3), train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp167/"$mytime && python training.py --name tinyimagenet --params configs/tinyimagenet_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp167/"$mytime"/logs.txt"
+
+----------------------------------Fashion MNIST----------------------------------
+Experiment 168: beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, fashionmnistconditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp168/"$mytime && python training.py --name fashionmnist --params configs/fashionmnist_fed.yaml --time $mytime > $(pwd)"/experiments/exp168/"$mytime"/logs.txt"
+
+Experiment 169: beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, fashionmnistconditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp169/"$mytime && python training.py --name fashionmnist --params configs/fashionmnist_fed.yaml --time $mytime > $(pwd)"/experiments/exp169/"$mytime"/logs.txt"
