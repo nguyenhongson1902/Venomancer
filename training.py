@@ -1477,6 +1477,9 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
     class_accuracies = {}
     class_counts= {}
     # count = 0
+    for i in range(hlpr.params.num_classes):
+        class_counts[i] = 0
+
 
     test_loss, correct = 0.0, 0
     test_backdoor_loss, backdoor_correct = 0.0, 0
