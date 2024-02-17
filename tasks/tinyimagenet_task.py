@@ -165,7 +165,7 @@ class TinyImageNetTask(Task):
         # print("Using resnet18 available in PyTorch, train from scratch")
 
         model = resnet18_dba().to('cuda')
-        path = "/disk/ssd_data/Son/Venomancer/pretrained/saved_models/tiny_64_pretrain/tiny-resnet.epoch_20"
+        path = "./pretrained/tiny-resnet.epoch_20"
         with open(path, "rb") as f:
             checkpoint = torch.load(f, map_location="cuda")
             model.load_state_dict(checkpoint['state_dict'])
