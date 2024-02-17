@@ -58,8 +58,8 @@ attack_portion: 1.0
 alpha: 0.5
 beta: 0.01
 test_n_size: 10
-input_height: 256
-input_width: 256
+input_height: 64
+input_width: 64
 input_channel: 3
 random_rotation: 10
 random_crop: 5
