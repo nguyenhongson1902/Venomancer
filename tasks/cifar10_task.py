@@ -140,11 +140,11 @@ class CIFAR10Task(Task):
 
         model = ResNet18_v2()
         
-        model = ResNet18_dba().to('cuda')
-        path = "./pretrained/model_last.pt.tar.epoch_200"
-        with open(path, "rb") as f:
-            checkpoint = torch.load(f, map_location="cuda")
-            model.load_state_dict(checkpoint['state_dict'])
-        print("Loaded pretrained weights resnet18 DBA")
+        # model = ResNet18_dba().to('cuda')
+        # path = "./pretrained/model_last.pt.tar.epoch_200"
+        # with open(path, "rb") as f:
+        #     checkpoint = torch.load(f, map_location="cuda")
+        #     model.load_state_dict(checkpoint['state_dict'])
+        # print("Loaded pretrained weights resnet18 DBA")
         
         return model
