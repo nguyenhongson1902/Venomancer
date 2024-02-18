@@ -9,6 +9,8 @@ from torchvision.transforms import transforms
 from models.resnet_cifar import ResNet18 as ResNet18_v1
 from models.resnet_cifar_v2 import ResNet18 as ResNet18_v2
 from models.resnet_cifar_dba import ResNet18 as ResNet18_dba
+from models.resnet_proper_implementation import resnet20
+from models import vgg9_only as vgg9
 from tasks.task import Task
 
 from utils.backdoor import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD, IMAGENET_MIN, IMAGENET_MAX
@@ -138,7 +140,7 @@ class CIFAR10Task(Task):
         #     checkpoint = torch.load(f, map_location="cuda")
         #     model.load_state_dict(checkpoint["state_dict"])
 
-        model = ResNet18_v2()
+        # model = ResNet18_v2()
         
         # model = ResNet18_dba().to('cuda')
         # path = "./pretrained/model_last.pt.tar.epoch_200"
@@ -146,5 +148,16 @@ class CIFAR10Task(Task):
         #     checkpoint = torch.load(f, map_location="cuda")
         #     model.load_state_dict(checkpoint['state_dict'])
         # print("Loaded pretrained weights resnet18 DBA")
+
+        # model = vgg9.VGG('VGG9')
+        # print("Train VGG9 from scratch")
+
+        # model = resnet20()
+        # checkpoint = torch.load("./pretrained/resnet20_check_point.pth")
+        # model.load_state_dict(checkpoint.state_dict())
+        # print("Use pretrained resnet20 on cifar10")
+
+        model = resnet20()
+        print("Use resnet20")
         
         return model
