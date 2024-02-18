@@ -150,12 +150,12 @@ class TinyImageNetTask(Task):
         #     model.load_state_dict(checkpoint["state_dict"])
         #     print("Successfully loaded pretrained weights from epoch 25 for ResNet18")
         
-        # model = models.resnet18(weights="ResNet18_Weights.DEFAULT")
-        # for params in model.parameters():
-        #     params.requires_grad = True
-        # num_ftrs = model.fc.in_features
-        # model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
-        # print("Successfully loaded pretrained weights PyTorch (ImageNet)")
+        model = models.resnet18(weights="ResNet18_Weights.DEFAULT")
+        for params in model.parameters():
+            params.requires_grad = True
+        num_ftrs = model.fc.in_features
+        model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
+        print("Successfully loaded pretrained weights PyTorch (ImageNet)")
 
         # model = models.resnet18(weights=None)
         # for params in model.parameters():
@@ -164,11 +164,11 @@ class TinyImageNetTask(Task):
         # model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
         # print("Using resnet18 available in PyTorch, train from scratch")
 
-        model = resnet18_dba().to('cuda')
-        path = "./pretrained/tiny-resnet.epoch_20"
-        with open(path, "rb") as f:
-            checkpoint = torch.load(f, map_location="cuda")
-            model.load_state_dict(checkpoint['state_dict'])
-        print("Using pretrained weights resnet18 from DBA")
+        # model = resnet18_dba().to('cuda')
+        # path = "./pretrained/tiny-resnet.epoch_20"
+        # with open(path, "rb") as f:
+        #     checkpoint = torch.load(f, map_location="cuda")
+        #     model.load_state_dict(checkpoint['state_dict'])
+        # print("Using pretrained weights resnet18 from DBA")
 
         return model
