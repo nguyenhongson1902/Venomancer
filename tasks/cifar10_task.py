@@ -9,7 +9,8 @@ from torchvision.transforms import transforms
 from models.resnet_cifar import ResNet18 as ResNet18_v1
 from models.resnet_cifar_v2 import ResNet18 as ResNet18_v2
 from models.resnet_cifar_dba import ResNet18 as ResNet18_dba
-from models.resnet_proper_implementation import resnet20
+from models.resnet_proper_implementation import resnet20, resnet32, resnet44
+import models.resnet_cifar10_resnet20 as resnet
 from models import vgg9_only as vgg9
 from tasks.task import Task
 
@@ -156,8 +157,28 @@ class CIFAR10Task(Task):
         # checkpoint = torch.load("./pretrained/resnet20_check_point.pth")
         # model.load_state_dict(checkpoint.state_dict())
         # print("Use pretrained resnet20 on cifar10")
+        
+        # model = resnet32()
+        # checkpoint = torch.load("./pretrained/resnet32_check_point.pth")
+        # model.load_state_dict(checkpoint.state_dict())
+        # print("Use pretrained resnet32 on cifar10")
 
-        model = resnet20()
-        print("Use resnet20")
+        # model = resnet32()
+        # checkpoint = torch.load("./pretrained/resnet32_check_point.pth")
+        # model.load_state_dict(checkpoint.state_dict())
+        # print("Use pretrained resnet32 on cifar10")
+
+        model = resnet44()
+        checkpoint = torch.load("./pretrained/resnet44_check_point.pth")
+        model.load_state_dict(checkpoint.state_dict())
+        print("Use pretrained resnet44 on cifar10")
+
+        # model = resnet20()
+        # print("Use resnet20")
+
+        # model = getattr(resnet, "cifar10_resnet20")()
+        # checkpoint = torch.load('./pretrained/cifar10_resnet20-4118986f.pt')
+        # model.load_state_dict(checkpoint)
+        # print("Use pretrained weights resnet20 (github https://github.com/chenyaofo/pytorch-cifar-models/tree/logs)")
         
         return model
