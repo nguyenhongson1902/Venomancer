@@ -721,3 +721,6 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 Experiment 182: Compare 179, lab, lr 0.001, ResNet18 pretrained, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp182/"$mytime && python training.py --name cifar100 --params configs/cifar100_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp182/"$mytime"/logs.txt"
 
+Experiment 192: Compare 179, lab, lr 0.001, ResNet18 pretrained (https://github.com/chenyaofo/pytorch-cifar-models/tree/logs), beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp192/"$mytime && python training.py --name cifar100 --params configs/cifar100_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp192/"$mytime"/logs.txt"
+
