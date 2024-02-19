@@ -150,12 +150,20 @@ class TinyImageNetTask(Task):
         #     model.load_state_dict(checkpoint["state_dict"])
         #     print("Successfully loaded pretrained weights from epoch 25 for ResNet18")
         
+        # model = models.resnet18(weights="ResNet18_Weights.DEFAULT")
+        # for params in model.parameters():
+        #     params.requires_grad = True
+        # num_ftrs = model.fc.in_features
+        # model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
+        # print("Successfully loaded pretrained weights PyTorch (ImageNet)")
+        
         model = models.resnet18(weights="ResNet18_Weights.DEFAULT")
-        for params in model.parameters():
-            params.requires_grad = True
-        num_ftrs = model.fc.in_features
-        model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
-        print("Successfully loaded pretrained weights PyTorch (ImageNet)")
+        model.avgpool = nn.AdaptiveAvgPool2d(1)
+        num_features = model.fc.in_features
+        model.fc = nn.Linear(num_features, 200)
+        checkpoint = torch.load("./pretrained/tinyimagenet_resnet18_epoch_10.pt")
+        model.load_state_dict(checkpoint)
+        print("Loaded a pretrained weights (https://github.com/tjmoon0104/pytorch-tiny-imagenet/tree/master?tab=readme-ov-file)")
 
         # model = models.resnet18(weights=None)
         # for params in model.parameters():
