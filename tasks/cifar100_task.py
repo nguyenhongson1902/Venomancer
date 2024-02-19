@@ -7,6 +7,7 @@ from torchvision.transforms import transforms
 
 # from models.resnet import resnet18
 from models.resnet_cifar100_v2 import ResNet18
+import models.resnet_cifar10_resnet20 as resnet
 from tasks.task import Task
 
 from utils.backdoor import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD, IMAGENET_MIN, IMAGENET_MAX
@@ -135,17 +136,23 @@ class CIFAR100Task(Task):
         #     checkpoint = torch.load(f, map_location="cuda")
         #     model.load_state_dict(checkpoint["state_dict"])
 
-        model = ResNet18()
-        path = "./pretrained/cifar100-resnet18.epoch_10"
-        with open(path, "rb") as f:
-            checkpoint = torch.load(f)
-            model.load_state_dict(checkpoint, strict=False)
-        print("Loaded cifar100-resnet18.epoch_10")
+        # model = ResNet18()
+        # path = "./pretrained/cifar100-resnet18.epoch_10"
+        # with open(path, "rb") as f:
+        #     checkpoint = torch.load(f)
+        #     model.load_state_dict(checkpoint, strict=False)
+        # print("Loaded cifar100-resnet18.epoch_10")
+
         # model = ResNet18_dba().to('cuda')
         # path = "./pretrained/model_last.pt.tar.epoch_200"
         # with open(path, "rb") as f:
         #     checkpoint = torch.load(f, map_location="cuda")
         #     model.load_state_dict(checkpoint['state_dict'])
         # print("Loaded pretrained weights resnet18 DBA")
+
+        model = getattr(resnet, "cifar100_resnet20")()
+        checkpoint = torch.load('./pretrained/cifar100_resnet20-23dac2f1.pt')
+        model.load_state_dict(checkpoint)
+        print("Use pretrained weights resnet20 (github https://github.com/chenyaofo/pytorch-cifar-models/tree/logs)")
         
         return model
