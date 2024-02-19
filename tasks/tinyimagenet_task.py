@@ -111,10 +111,12 @@ class TinyImageNetTask(Task):
         train_transform = transforms.Compose([
             transforms.Resize((224,224)),
             transforms.ToTensor(),
+            transforms.Normalize([0.4802, 0.4481, 0.3975], [0.2302, 0.2265, 0.2262]),
         ])
         test_transform = transforms.Compose([
             transforms.Resize((224,224)),
             transforms.ToTensor(),
+            transforms.Normalize([0.4802, 0.4481, 0.3975], [0.2302, 0.2265, 0.2262]),
         ])
 
         # dset = {x : torchvision.datasets.ImageFolder(path+x, transform=transformers[y]) for x,y in zip(categories, trans)}
