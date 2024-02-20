@@ -602,8 +602,10 @@ class Task:
             atkmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device) # tinyimagenet
             # checkpoint = torch.load("./pretrained/tinyimagenet_model_backdoor_epoch_100.pt.tar", map_location="cuda")
             # atkmodel.load_state_dict(checkpoint['tgt_state_dict'])
-            checkpoint = torch.load("./pretrained/tinyimagenet_model_backdoor_64_epoch_100.pt.tar", map_location="cuda")
-            atkmodel.load_state_dict(checkpoint['tgt_state_dict'])
+
+            # checkpoint = torch.load("./pretrained/tinyimagenet_model_backdoor_64_epoch_100.pt.tar", map_location="cuda")
+            # atkmodel.load_state_dict(checkpoint['tgt_state_dict'])
+            
             # atkmodel = ConditionalUNet(n_classes, input_dim, 1).to(self.params.device) # chestxray
             # atkmodel = Autoencoder().to(self.params.device)
             # atkmodel = UNet(3).to(self.params.device)
