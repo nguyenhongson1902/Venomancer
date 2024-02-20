@@ -736,3 +736,9 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 Experiment 195: Compare 179, lab, normalize,  lr 0.001, ResNet18 pretrained (https://github.com/chenyaofo/pytorch-cifar-models/tree/logs), beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp195/"$mytime && python training.py --name cifar100 --params configs/cifar100_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp195/"$mytime"/logs.txt"
 
+Experiment 197: Compare 179, lab, lr 0.001, ResNet18 pretrained (https://github.com/chenyaofo/pytorch-cifar-models/tree/logs), beta=0.02, fedavg, fixed_frequency 1, poison 1-1000, conditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp197/"$mytime && python training.py --name cifar100 --params configs/cifar100_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp197/"$mytime"/logs.txt"
+
+Experiment 198: Compare 179, lab, lr 0.001, ResNet18 pretrained (https://github.com/chenyaofo/pytorch-cifar-models/tree/logs), beta=0.03, fedavg, fixed_frequency 1, poison 1-1000, conditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp198/"$mytime && python training.py --name cifar100 --params configs/cifar100_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp198/"$mytime"/logs.txt"
+
