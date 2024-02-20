@@ -109,12 +109,12 @@ class TinyImageNetTask(Task):
     def load_tinyimagenet_data(self):
 
         train_transform = transforms.Compose([
-            transforms.Resize((224,224)),
+            # transforms.Resize((224,224)),
             transforms.ToTensor(),
             # transforms.Normalize([0.4802, 0.4481, 0.3975], [0.2302, 0.2265, 0.2262]),
         ])
         test_transform = transforms.Compose([
-            transforms.Resize((224,224)),
+            # transforms.Resize((224,224)),
             transforms.ToTensor(),
             # transforms.Normalize([0.4802, 0.4481, 0.3975], [0.2302, 0.2265, 0.2262]),
         ])
@@ -159,7 +159,7 @@ class TinyImageNetTask(Task):
         # model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
         # print("Successfully loaded pretrained weights PyTorch (ImageNet)")
         
-        model = models.resnet18(weights="ResNet18_Weights.DEFAULT")
+        model = models.resnet18(weights=None)
         model.avgpool = nn.AdaptiveAvgPool2d(1)
         num_features = model.fc.in_features
         model.fc = nn.Linear(num_features, 200)
