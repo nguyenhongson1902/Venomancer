@@ -8,6 +8,7 @@ from torchvision.transforms import transforms
 # from models.resnet import resnet18
 from models.resnet_cifar100_v2 import ResNet18
 import models.resnet_cifar10_resnet20 as resnet
+from models.resnet_pytorch_cifar100 import resnet18
 from tasks.task import Task
 
 from utils.backdoor import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD, IMAGENET_MIN, IMAGENET_MAX
@@ -76,7 +77,7 @@ class CIFAR100Task(Task):
         #     ])
         
         # transform_train = transforms.Compose([transforms.ToTensor(), self.normalize,])
-        transform_train = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5070751592371323, 0.48654887331495095, 0.4409178433670343), (0.2673342858792401, 0.2564384629170883, 0.27615047132568404))]) # My method
+        transform_train = transforms.Compose([transforms.ToTensor(), ]) # My method
         
         # A3FL transformations
         # transform_train = transforms.Compose([
@@ -88,7 +89,7 @@ class CIFAR100Task(Task):
 
         
         # transform_test = transforms.Compose([transforms.ToTensor(), self.normalize])
-        transform_test = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5070751592371323, 0.48654887331495095, 0.4409178433670343), (0.2673342858792401, 0.2564384629170883, 0.27615047132568404))]) # My method
+        transform_test = transforms.Compose([transforms.ToTensor(), ]) # My method
 
         # A3FL transformations
         # transform_test = transforms.Compose([
@@ -154,5 +155,11 @@ class CIFAR100Task(Task):
         checkpoint = torch.load('./pretrained/cifar100_resnet20-23dac2f1.pt')
         model.load_state_dict(checkpoint)
         print("Use pretrained weights resnet20 (github https://github.com/chenyaofo/pytorch-cifar-models/tree/logs)")
+
+        # model = resnet18()
+        # checkpoint = torch.load("./pretrained/resnet18-200-cifar100.pth")
+        # model.load_state_dict(checkpoint)
+        # print("Use pretrained weights resnet20 (github https://github.com/weiaicunzai/pytorch-cifar100)")
+
         
         return model
