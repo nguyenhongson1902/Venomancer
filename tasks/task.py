@@ -592,6 +592,7 @@ class Task:
         elif self.params.task.lower() == 'tinyimagenet':
             from attack_models.autoencoders import ChestXRayConditionalAutoencoder, ConditionalAutoencoder
             from attack_models.unet import UNet, ConditionalUNet
+            from attack_models.unet_model import ConditionalUNet_v2
 
             input_dim = self.params.input_shape[1]
             n_classes = self.params.num_classes
@@ -600,6 +601,7 @@ class Task:
             # atkmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device) # tinyimagenet
             # atkmodel = ChestXRayConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             atkmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device) # tinyimagenet
+            # atkmodel = ConditionalUNet_v2(n_classes, input_dim, 3).to(self.params.device) # tinyimagenet
             # checkpoint = torch.load("./pretrained/tinyimagenet_model_backdoor_epoch_100.pt.tar", map_location="cuda")
             # atkmodel.load_state_dict(checkpoint['tgt_state_dict'])
 
@@ -614,6 +616,7 @@ class Task:
             # tgtmodel = ConditionalAutoencoder(n_classes, input_dim).to(self.params.device) # tinyimagenet
             # tgtmodel = ChestXRayConditionalAutoencoder(n_classes, input_dim).to(self.params.device)
             tgtmodel = ConditionalUNet(n_classes, input_dim, 3).to(self.params.device) # tinyimagenet
+            # tgtmodel = ConditionalUNet_v2(n_classes, input_dim, 3).to(self.params.device) # tinyimagenet
             # tgtmodel = ConditionalUNet(n_classes, input_dim, 1).to(self.params.device) # chestxray
             # tgtmodel = Autoencoder().to(self.params.device)
             # tgtmodel = UNet(3).to(self.params.device)
