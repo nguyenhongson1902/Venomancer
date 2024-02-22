@@ -109,12 +109,12 @@ class TinyImageNetTask(Task):
     def load_tinyimagenet_data(self):
 
         train_transform = transforms.Compose([
-            # transforms.Resize((224,224)),
+            transforms.Resize((224,224)),
             transforms.ToTensor(),
             # transforms.Normalize([0.4802, 0.4481, 0.3975], [0.2302, 0.2265, 0.2262]),
         ])
         test_transform = transforms.Compose([
-            # transforms.Resize((224,224)),
+            transforms.Resize((224,224)),
             transforms.ToTensor(),
             # transforms.Normalize([0.4802, 0.4481, 0.3975], [0.2302, 0.2265, 0.2262]),
         ])
@@ -159,23 +159,23 @@ class TinyImageNetTask(Task):
         # model.fc = torch.nn.Linear(num_ftrs, self.params.num_classes)
         # print("Successfully loaded pretrained weights PyTorch (ImageNet)")
         
-        # model = models.resnet18(weights=None)
-        # model.avgpool = nn.AdaptiveAvgPool2d(1)
-        # num_features = model.fc.in_features
-        # model.fc = nn.Linear(num_features, 200)
-        # checkpoint = torch.load("./pretrained/tinyimagenet_resnet18_epoch_10.pt")
-        # model.load_state_dict(checkpoint)
-        # print("Loaded a pretrained weights (https://github.com/tjmoon0104/pytorch-tiny-imagenet/tree/master?tab=readme-ov-file)")
-
         model = models.resnet18(weights=None)
-        model.conv1 = nn.Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
-        model.maxpool = nn.Sequential()
         model.avgpool = nn.AdaptiveAvgPool2d(1)
         num_features = model.fc.in_features
         model.fc = nn.Linear(num_features, 200)
-        checkpoint = torch.load("./pretrained/tinyimagenet_resnet18_finetune.pt", map_location="cuda")
+        checkpoint = torch.load("./pretrained/tinyimagenet_resnet18_epoch_10.pt")
         model.load_state_dict(checkpoint)
-        print("Loaded a pretrained weights finetune (https://github.com/tjmoon0104/pytorch-tiny-imagenet/tree/master?tab=readme-ov-file)")
+        print("Loaded a pretrained weights (https://github.com/tjmoon0104/pytorch-tiny-imagenet/tree/master?tab=readme-ov-file)")
+
+        # model = models.resnet18(weights=None)
+        # model.conv1 = nn.Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        # model.maxpool = nn.Sequential()
+        # model.avgpool = nn.AdaptiveAvgPool2d(1)
+        # num_features = model.fc.in_features
+        # model.fc = nn.Linear(num_features, 200)
+        # checkpoint = torch.load("./pretrained/tinyimagenet_resnet18_finetune.pt", map_location="cuda")
+        # model.load_state_dict(checkpoint)
+        # print("Loaded a pretrained weights finetune (https://github.com/tjmoon0104/pytorch-tiny-imagenet/tree/master?tab=readme-ov-file)")
 
         # model = models.resnet18(weights=None)
         # for params in model.parameters():
