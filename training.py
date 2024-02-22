@@ -953,13 +953,13 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             # (0.8*atkloss + 0.2*visual_loss).mean().backward(retain_graph=True)
 
             # visual_loss = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1)) # Comment out to test with other visual loss, this works
-            visual_loss = torch.nn.functional.mse_loss(atkdata, data)
+            visual_loss = torch.nn.functional.mse_loss(atkdata, data, reduction="none").flatten(start_dim=1).sum(axis=1)
             # (atkloss + visual_loss).mean().backward(retain_graph=True)
             # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
             # (0.9*atkloss + 0.1*visual_loss).mean().backward(retain_graph=True)
             # (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward(retain_graph=True)
             # (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward() # Comment out to test with other visual loss, this works
-            (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).backward()
+            (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward()
             # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
 
             # ssim = pytorch_ssim.SSIM(window_size=11)
@@ -1506,7 +1506,7 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
 
                 # visual_diff = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
                 # visual_diff = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1)) # cosine distance, range [0; 1], comment out to test other visual losses, this works
-                visual_diff = torch.nn.functional.mse_loss(atkdata, data)
+                visual_diff = torch.nn.functional.mse_loss(atkdata, data, reduction="none")
                 # ssim = pytorch_ssim.SSIM(window_size=11)
                 # visual_diff = (ssim(atkdata, data) + 1) / 2
                 # huber_loss = torch.nn.HuberLoss(reduction='none', delta=1.0)
@@ -1826,17 +1826,19 @@ if __name__ == '__main__':
     parser.add_argument('--params', dest='params', help="Parameters of the task. Pass in the path to config file", required=True)
     parser.add_argument('--name', dest='name', help="Name of a task (MNIST, CIFAR-10, etc)",required=True)
     parser.add_argument('--time', dest='time', help='Current time from the terminal', required=True)
+    parser.add_argument('--exp', dest='exp', help='Experiment number', required=True)
     args = parser.parse_args()
     with open(args.params) as f:
         params = yaml.load(f, Loader=yaml.FullLoader)
     # params['current_time'] = datetime.now().strftime('%m.%d_%H.%M.%S')
     params['current_time'] = args.time # Get the current time from the terminal
     params['name'] = args.name # Name of the running task
+    params['exp'] = args.exp # Experiment number
 
     helper = Helper(params)
      # Transform original labels to target labels, default: all2one
     wandb.login(key="917b44927c77ee61ea91005724c9bd9b470f116a")
-    wandb.init(project="backdoor-attack", entity="nguyenhongsonk62hust", name=f"{params['name']}-{params['current_time']}", dir="./hdd/home/ssd_data/Son/Venomancer/wandb/wandb")
+    wandb.init(project="backdoor-attack", entity="nguyenhongsonk62hust", name=f"{params['exp']}_{params['name']}-{params['current_time']}", dir="./hdd/home/ssd_data/Son/Venomancer/wandb/wandb")
     logger.warning(create_table(params)) # Print the table of parameters to the terminal, showing as warnings
     try:
         run(helper)

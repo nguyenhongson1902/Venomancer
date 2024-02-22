@@ -14,6 +14,7 @@ class Params:
 
     prefix: str = None # Prefix to the path to another place
     current_time: str = None
+    exp: str = None
     name: str = None
     random_seed: int = 2025 # cifar-10, mnist, chestxray
     device: str = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
