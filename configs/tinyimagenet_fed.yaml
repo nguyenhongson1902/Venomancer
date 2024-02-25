@@ -56,13 +56,13 @@ eps: 0.01 # epsilon for data poisoning, deprecated
 num_classes: 200
 attack_portion: 1.0
 alpha: 0.5
-beta: 0.998
+beta: 0.07
 test_n_size: 10
-input_height: 224
-input_width: 224
-input_channel: 3
-random_rotation: 10
-random_crop: 5
+# input_height: 64 # doesn't affect the logic of the program
+# input_width: 64 # doesn't affect the logic of the program
+# input_channel: 3 # doesn't affect the logic of the program
+random_rotation: 10 # have that to make the program run, deprecated
+random_crop: 5 # have that to make the program run, deprecated
 dataset: tinyimagenet
 mode: all2one
 fixed_frequency: 1

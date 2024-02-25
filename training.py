@@ -952,14 +952,14 @@ def train_like_a_gan_with_visual_loss(hlpr: Helper, local_epoch, local_model, lo
             # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True) # not good
             # (0.8*atkloss + 0.2*visual_loss).mean().backward(retain_graph=True)
 
-            # visual_loss = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1)) # Comment out to test with other visual loss, this works
-            visual_loss = torch.nn.functional.mse_loss(atkdata, data, reduction="none").flatten(start_dim=1).sum(axis=1)
+            visual_loss = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1)) # Comment out to test with other visual loss, this works
+            # visual_loss = torch.nn.functional.mse_loss(atkdata, data, reduction="none").flatten(start_dim=1).sum(axis=1)
             # (atkloss + visual_loss).mean().backward(retain_graph=True)
             # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
             # (0.9*atkloss + 0.1*visual_loss).mean().backward(retain_graph=True)
             # (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward(retain_graph=True)
-            # (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward() # Comment out to test with other visual loss, this works
-            (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward()
+            (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward() # Comment out to test with other visual loss, this works
+            # (hlpr.params.beta*atkloss + (1 - hlpr.params.beta)*visual_loss).mean().backward()
             # (0.5*atkloss + 0.5*visual_loss).mean().backward(retain_graph=True)
 
             # ssim = pytorch_ssim.SSIM(window_size=11)
@@ -1505,8 +1505,8 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
                 atkdata, atktarget = make_backdoor_batch(hlpr, data, target, atkmodel, target_transform, multitarget=True)
 
                 # visual_diff = torch.sum(torch.square(atkdata - data), dim=(1, 2, 3))
-                # visual_diff = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1)) # cosine distance, range [0; 1], comment out to test other visual losses, this works
-                visual_diff = torch.nn.functional.mse_loss(atkdata, data, reduction="none")
+                visual_diff = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1)) # cosine distance, range [0; 1], comment out to test other visual losses, this works
+                # visual_diff = torch.nn.functional.mse_loss(atkdata, data, reduction="none")
                 # ssim = pytorch_ssim.SSIM(window_size=11)
                 # visual_diff = (ssim(atkdata, data) + 1) / 2
                 # huber_loss = torch.nn.HuberLoss(reduction='none', delta=1.0)
