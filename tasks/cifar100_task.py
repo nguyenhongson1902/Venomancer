@@ -6,7 +6,8 @@ from torch.utils.data import Subset
 from torchvision.transforms import transforms
 
 # from models.resnet import resnet18
-from models.resnet_cifar100_v2 import ResNet18
+from models.resnet_cifar100_v2 import ResNet18 as ResNet18_v2
+from models.resnet_cifar100_v1 import ResNet18 as ResNet18_v1
 import models.resnet_cifar10_resnet20 as resnet
 from models.resnet_pytorch_cifar100 import resnet18
 from tasks.task import Task
@@ -151,10 +152,13 @@ class CIFAR100Task(Task):
         #     model.load_state_dict(checkpoint['state_dict'])
         # print("Loaded pretrained weights resnet18 DBA")
 
-        model = getattr(resnet, "cifar100_resnet20")()
-        checkpoint = torch.load('./pretrained/cifar100_resnet20-23dac2f1.pt')
-        model.load_state_dict(checkpoint)
-        print("Use pretrained weights resnet20 (github https://github.com/chenyaofo/pytorch-cifar-models/tree/logs)")
+        # model = getattr(resnet, "cifar100_resnet20")()
+        # checkpoint = torch.load('./pretrained/cifar100_resnet20-23dac2f1.pt')
+        # model.load_state_dict(checkpoint)
+        # print("Use pretrained weights resnet20 (github https://github.com/chenyaofo/pytorch-cifar-models/tree/logs)")
+
+        model = ResNet18_v1()
+        print("Training ResNet18_v1 from scratch")
 
         # model = resnet18()
         # checkpoint = torch.load("./pretrained/resnet18-200-cifar100.pth")

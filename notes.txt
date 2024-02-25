@@ -847,3 +847,11 @@ export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(
 Experiment 198: Compare 179, lab, lr 0.001, ResNet18 pretrained (https://github.com/chenyaofo/pytorch-cifar-models/tree/logs), beta=0.03, fedavg, fixed_frequency 1, poison 1-1000, conditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
 export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp198/"$mytime && python training.py --name cifar100 --params configs/cifar100_fed.yaml --time $mytime > $(pwd)"/experiments/experiments/exp198/"$mytime"/logs.txt"
 
+Experiment 239: cecs_a5000, lr 0.01, ResNet18_v2 from scratch, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=0 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp239/"$mytime && python training.py --name cifar100 --params configs/cifar100_fed.yaml --time $mytime --exp exp239 > $(pwd)"/experiments/experiments/exp239/"$mytime"/logs.txt"
+
+Experiment 240: cecs_a5000, lr 0.01, ResNet18_v2 from scratch, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalautoencoder, multitarget, train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=1 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp240/"$mytime && python training.py --name cifar100 --params configs/cifar100_fed.yaml --time $mytime --exp exp240 > $(pwd)"/experiments/experiments/exp240/"$mytime"/logs.txt"
+
+Experiment 241: cecs_a5000, lr 0.01, ResNet18_v1 from scratch, beta=0.01, fedavg, fixed_frequency 1, poison 1-1000, conditionalunet, multitarget, train like a gan with visual loss, 2/10 adversary
+export CUDA_VISIBLE_DEVICES=4 && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/experiments/exp241/"$mytime && python training.py --name cifar100 --params configs/cifar100_fed.yaml --time $mytime --exp exp241 > $(pwd)"/experiments/experiments/exp241/"$mytime"/logs.txt"
