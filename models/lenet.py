@@ -6,7 +6,7 @@ class LeNet(nn.Module):
     def __init__(self):
         super(LeNet, self).__init__()
         # Add a conv layer with kernel size 1, padding 33, stride 3
-        self.conv0 = nn.Conv2d(1, 3, 1, padding=33, stride=3)
+        # self.conv0 = nn.Conv2d(1, 3, 1, padding=33, stride=3)
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.fc1   = nn.Linear(16*5*5, 120)
@@ -15,7 +15,7 @@ class LeNet(nn.Module):
 
     def forward(self, x):
         # Apply conv0 to inputs to convert 1 to 3 channels, keeping the same height, width
-        x = self.conv0(x)
+        # x = self.conv0(x)
         out = F.relu(self.conv1(x))
         out = F.max_pool2d(out, 2)
         out = F.relu(self.conv2(out))
