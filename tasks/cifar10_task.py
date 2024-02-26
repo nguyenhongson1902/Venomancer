@@ -168,10 +168,10 @@ class CIFAR10Task(Task):
         # model.load_state_dict(checkpoint.state_dict())
         # print("Use pretrained resnet32 on cifar10")
 
-        model = resnet44()
-        checkpoint = torch.load("./pretrained/resnet44_check_point.pth")
-        model.load_state_dict(checkpoint.state_dict())
-        print("Use pretrained resnet44 on cifar10")
+        # model = resnet44()
+        # checkpoint = torch.load("./pretrained/resnet44_check_point.pth")
+        # model.load_state_dict(checkpoint.state_dict())
+        # print("Use pretrained resnet44 on cifar10")
 
         # model = resnet20()
         # print("Use resnet20")
@@ -181,4 +181,13 @@ class CIFAR10Task(Task):
         # model.load_state_dict(checkpoint)
         # print("Use pretrained weights resnet20 (github https://github.com/chenyaofo/pytorch-cifar-models/tree/logs)")
         
+        # model = ResNet18_v2()
+        # checkpoint = torch.load('./pretrained/cifar10_resnet18v2_epoch_60.pt', map_location="cuda")
+        # model.load_state_dict(checkpoint)
+        # print("Training ResNet18_v2 pretrained 60 epochs")
+        model = ResNet18_v2()
+        checkpoint = torch.load('./pretrained/cifar10_resnet18v2_epoch_10.pt', map_location="cuda")
+        model.load_state_dict(checkpoint)
+        print("Training ResNet18_v2 pretrained 10 epochs")
+
         return model
