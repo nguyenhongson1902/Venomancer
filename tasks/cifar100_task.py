@@ -157,8 +157,12 @@ class CIFAR100Task(Task):
         # model.load_state_dict(checkpoint)
         # print("Use pretrained weights resnet20 (github https://github.com/chenyaofo/pytorch-cifar-models/tree/logs)")
 
-        model = ResNet18_v1()
-        print("Training ResNet18_v1 from scratch")
+        # model = ResNet18_v1()
+        # print("Training ResNet18_v1 from scratch")
+        model = ResNet18_v2()
+        checkpoint = torch.load('./pretrained/cifar100_resnet18v2_epoch_60.pt')
+        model.load_state_dict(checkpoint)
+        print("Training ResNet18_v2 pretrained 60 epochs")
 
         # model = resnet18()
         # checkpoint = torch.load("./pretrained/resnet18-200-cifar100.pth")
