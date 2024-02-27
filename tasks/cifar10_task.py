@@ -141,7 +141,8 @@ class CIFAR10Task(Task):
         #     checkpoint = torch.load(f, map_location="cuda")
         #     model.load_state_dict(checkpoint["state_dict"])
 
-        # model = ResNet18_v2()
+        model = ResNet18_v2()
+        print("Train ResNet18_v2 from scratch")
         
         # model = ResNet18_dba().to('cuda')
         # path = "./pretrained/model_last.pt.tar.epoch_200"
@@ -185,9 +186,9 @@ class CIFAR10Task(Task):
         # checkpoint = torch.load('./pretrained/cifar10_resnet18v2_epoch_60.pt', map_location="cuda")
         # model.load_state_dict(checkpoint)
         # print("Training ResNet18_v2 pretrained 60 epochs")
-        model = ResNet18_v2()
-        checkpoint = torch.load('./pretrained/cifar10_resnet18v2_epoch_10.pt', map_location="cuda")
-        model.load_state_dict(checkpoint)
-        print("Training ResNet18_v2 pretrained 10 epochs")
+        # model = ResNet18_v2()
+        # checkpoint = torch.load('./pretrained/cifar10_resnet18v2_epoch_10.pt', map_location="cuda")
+        # model.load_state_dict(checkpoint)
+        # print("Training ResNet18_v2 pretrained 10 epochs")
 
         return model
