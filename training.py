@@ -1291,7 +1291,7 @@ def train_like_a_gan(hlpr: Helper, local_epoch, local_model, local_optimizer, lo
             data, target = batch.inputs, batch.labels
 
             # atktarget = target_transform(target) # Flipping label
-            atktarget = target_transform(target, n_classes=10)
+            atktarget = target_transform(target, n_classes=hlpr.params.num_classes)
 
             # First, update the atkmodel weights using tgtoptimizer.step(), fix local_model weights
             # noise = tgtmodel(data) * hlpr.params.eps # Do I need to pass atktarget?
@@ -1311,10 +1311,12 @@ def train_like_a_gan(hlpr: Helper, local_epoch, local_model, local_optimizer, lo
 
             # local_optimizer.zero_grad()
             tgtoptimizer.zero_grad()
-            atkloss.mean().backward(retain_graph=True)
+            # atkloss.mean().backward(retain_graph=True)
+            atkloss.mean().backward()
             tgtoptimizer.step() # Only update the weights of the generative model
 
-            visual_diff = torch.sum(torch.square(atkdata - data)) / bs
+            # visual_diff = torch.sum(torch.square(atkdata - data)) / bs
+            visual_diff = 1 - torch.nn.functional.cosine_similarity(atkdata.flatten(start_dim=1), data.flatten(start_dim=1))
 
             # Second, update local_model weights using local_optimizer.step(), fix atkmodel weights
             # noise = tgtmodel(data) * hlpr.params.eps
@@ -1340,7 +1342,7 @@ def train_like_a_gan(hlpr: Helper, local_epoch, local_model, local_optimizer, lo
             local_optimizer.step() # Only update the weights of the classifier model
 
             if batch_idx % 10 or batch_idx == len(local_train_loader) - 1:
-                print(f"Train Malicious [Batch {batch_idx}/{len(local_train_loader)}, Epoch {local_epoch}], Generative Loss {atkloss.mean().item():.4f}, Visual Difference: {visual_diff.item():.4f}, Classifier: Clean Loss {clean_loss.mean().item():.4f} " \
+                print(f"Train Malicious [Batch {batch_idx}/{len(local_train_loader)}, Epoch {local_epoch}], Generative Loss {atkloss.mean().item():.4f}, Visual Difference: {visual_diff.mean().item():.4f}, Classifier: Clean Loss {clean_loss.mean().item():.4f} " \
                     f"Backdoor Loss {backdoor_loss.mean().item():.4f} Total {total_loss.mean().item():.4f}")
         
         atkloss = sum(atklosslist) / local_dataset_size
@@ -1357,7 +1359,8 @@ def train_like_a_gan(hlpr: Helper, local_epoch, local_model, local_optimizer, lo
             local_dataset_size += bs
 
             data, target = batch.inputs, batch.labels
-            augmented_data = post_transforms(data)
+            # augmented_data = post_transforms(data)
+            augmented_data = data.clone()
 
             output = local_model(augmented_data)
             loss = hlpr.task.criterion(output, target)
@@ -1699,17 +1702,17 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
                 #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
                 #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
                 
-                # atkloss, cleanloss, backdoorloss = train_like_a_gan(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
-                #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
-                #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
+                atkloss, cleanloss, backdoorloss = train_like_a_gan(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
+                                                         atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
+                                                         clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
                 
                 # atkloss, cleanloss, backdoorloss, local_ba = train_like_a_gan_iba(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
                 #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
                 #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms, threshold_ba=0.85)
                 
-                atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
-                                                         atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
-                                                         clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
+                # atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
+                #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
+                #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
                 
                 # atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss_check_durability(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
                 #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
