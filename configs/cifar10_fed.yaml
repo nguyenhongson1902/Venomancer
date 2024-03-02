@@ -9,7 +9,7 @@ momentum: 0.9
 decay: 0.0005
 epochs: 1000
 poison_epoch: 1
-poison_epoch_stop: 1000
+poison_epoch_stop: 300
 save_on_epochs: [50, 100, 200, 400, 500, 700, 900, 1000, 1200, 1500, 1700, 1900, 2500, 3000, 4500, 5000, 5500] # [100, 200, 400, 500, 700, 900]
 optimizer: SGD #SGD
 log_interval: 100
@@ -56,7 +56,7 @@ eps: 0.1 # epsilon for data poisoning, deprecated
 num_classes: 10
 attack_portion: 1.0
 alpha: 0.5
-beta: 0.01
+beta: 0.05
 test_n_size: 10
 input_height: 32
 input_width: 32

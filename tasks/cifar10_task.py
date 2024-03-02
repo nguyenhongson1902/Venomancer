@@ -143,6 +143,9 @@ class CIFAR10Task(Task):
 
         model = ResNet18_v2()
         print("Train ResNet18_v2 from scratch")
+
+        # model = ResNet18_v1()
+        # print("Train ResNet18_v1 from scratch")
         
         # model = ResNet18_dba().to('cuda')
         # path = "./pretrained/model_last.pt.tar.epoch_200"
