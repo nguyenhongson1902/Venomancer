@@ -179,3 +179,4 @@ test.py
 infer.ipynb
 hdd/
 pretrained/
+.wandb_key
