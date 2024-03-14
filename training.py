@@ -1860,8 +1860,8 @@ if __name__ == '__main__':
     with open(file_path, "r") as f:
         key = f.readline().strip()
 
-    wandb.login(key=key)
-    wandb.init(project="backdoor-attack", entity="nguyenhongsonk62hust", name=f"{params['exp']}_{params['name']}-{params['current_time']}", dir="./hdd/home/ssd_data/Son/Venomancer/wandb/wandb")
+    # You need to initialize your wandb HERE
+    
     logger.warning(create_table(params)) # Print the table of parameters to the terminal, showing as warnings
     try:
         run(helper)
