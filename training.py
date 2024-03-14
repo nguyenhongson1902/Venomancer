@@ -1568,11 +1568,16 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
     #                          prefix=f'Backdoor {str(backdoor):5s}. Epoch: ')
     # return metric
 
-def test_with_patch(hlpr: Helper, epoch, model=None):
+def test_with_patch(hlpr: Helper, epoch, model=None, test=True):
     if model is None:
         model = hlpr.task.model
     model.eval()
 
+    class_accuracies = {}
+    class_counts= {}
+    # count = 0
+    for i in range(hlpr.params.num_classes):
+        class_counts[i] = 0
 
     test_loss, correct = 0.0, 0
     test_backdoor_loss, backdoor_correct = 0.0, 0
@@ -1586,22 +1591,30 @@ def test_with_patch(hlpr: Helper, epoch, model=None):
             pred = output.max(1, keepdim=True)[1]  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()
             
-            backdoored_batch = hlpr.attack.synthesizer.make_backdoor_batch(batch, test=True, attack=True)
+            backdoored_batch = hlpr.attack.synthesizer.make_backdoor_batch(batch, test=True, attack=True, test_phase=True)
             atkdata, atktarget = backdoored_batch.inputs, backdoored_batch.labels
             atkoutput = model(atkdata)
 
             test_backdoor_loss += hlpr.task.criterion(atkoutput, atktarget).sum().item()
             atkpred = atkoutput.max(1, keepdim=True)[1]  # get the index of the max log-probability
+
+            calculate_each_class_accuracy(atkpred, atktarget, class_accuracies, class_counts)
+
             backdoor_correct += atkpred.eq(atktarget.view_as(atkpred)).sum().item()
     test_loss /= len(hlpr.task.test_loader.dataset)
     acc = correct / len(hlpr.task.test_loader.dataset)
+
+    assert len(class_counts) in [15, 10, 200, 0, 100], "The number of classes is not equal to 15 (chestxray) or 10 (mnist, fashionmnist, cifar10) or 200 (tinyimagenet) or 100 (cifar100) or 0 (no attack). The problem is due to randomly sampling negative labels"
+    for tar, cor in class_accuracies.items():
+        if class_counts[tar] != 0:
+            class_accuracies[tar] = cor / class_counts[tar]
 
     test_backdoor_loss /= len(hlpr.task.test_loader.dataset)
     backdoor_acc = backdoor_correct / len(hlpr.task.test_loader.dataset)
 
     print('\nTest [{}]: Clean Loss {:.4f}, Backdoor Loss {:.4f}, Clean Accuracy {:.4f}, Backdoor Accuracy {:.4f}'.format(epoch,
             test_loss, test_backdoor_loss, acc, backdoor_acc))
-    return acc, backdoor_acc, test_loss, test_backdoor_loss 
+    return acc, backdoor_acc, test_loss, test_backdoor_loss, class_accuracies
     
 def train_with_patch(hlpr: Helper, local_epoch, local_model, local_optimizer, local_train_loader, attack=True, global_model=None, post_transforms=None):
     if attack:
@@ -1618,12 +1631,13 @@ def train_with_patch(hlpr: Helper, local_epoch, local_model, local_optimizer, lo
             data, target = batch.inputs, batch.labels
 
             # First, update the atkmodel weights using tgtoptimizer.step(), fix local_model weights
-            backdoored_batch = hlpr.attack.synthesizer.make_backdoor_batch(batch, test=True, attack=True)
+            backdoored_batch = hlpr.attack.synthesizer.make_backdoor_batch(batch, test=True, attack=True, test_phase=False)
             atkdata = backdoored_batch.inputs
             atktarget = backdoored_batch.labels
 
-            augmented_atkdata = post_transforms(atkdata)
+            # augmented_atkdata = post_transforms(atkdata)
             # augmented_data = post_transforms(data)
+            augmented_atkdata = atkdata.clone()
 
             # output = local_model(augmented_data)
             atkoutput = local_model(augmented_atkdata)
@@ -1804,13 +1818,15 @@ def run(hlpr: Helper):
 
         # atkmodel.eval() # Starts from exp66
         clean_acc, backdoor_acc, clean_loss, backdoor_loss, visual_diff, class_accuracies = test(hlpr, epoch, backdoor=True, atkmodel=tgtmodel) # Use tgtmodel (currently in the eval mode)
-        # clean_acc, backdoor_acc, clean_loss, backdoor_loss = test_with_patch(hlpr, epoch)
+        # clean_acc, backdoor_acc, clean_loss, backdoor_loss, class_accuracies = test_with_patch(hlpr, epoch, test=True)
         # wandb log acc and backdoor_acc, clean_loss, backdoor_loss
         wandb.log({"Clean Accuracy": clean_acc, "Backdoor Accuracy": backdoor_acc, "Clean Loss": clean_loss, "Backdoor Loss": backdoor_loss, "Visual Difference": visual_diff}, step=epoch)
+        # wandb.log({"Clean Accuracy": clean_acc, "Backdoor Accuracy": backdoor_acc, "Clean Loss": clean_loss, "Backdoor Loss": backdoor_loss}, step=epoch)
 
         for target, accuracy in class_accuracies.items():
             class_accuracies_log[f"Class {target}"] = accuracy
         wandb.log(class_accuracies_log, step=epoch)
+
         # hlpr.record_accuracy(metric, test(hlpr, epoch, backdoor=True), epoch)
 
         # hlpr.save_model(hlpr.task.model, epoch, metric)

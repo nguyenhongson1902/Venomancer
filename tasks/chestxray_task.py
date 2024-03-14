@@ -138,10 +138,10 @@ class ChestXRayTask(Task):
         #     transform=transform_train)
         # self.train_dataset = ImageFolder(root=os.path.join(images_folder, "train_images_11257"), transform=transform_train)
         
-        # train_path = "./.data/dataset/train"
-        # test_path = "./.data/dataset/test"
-        train_path = "./.data/dataset/train_full"
-        test_path = "./.data/dataset/test_full"
+        train_path = "./.data/dataset/train"
+        test_path = "./.data/dataset/test"
+        # train_path = "./.data/dataset/train_full"
+        # test_path = "./.data/dataset/test_full"
         transform_train = transforms.Compose([
             transforms.Resize((256, 256)),
             # transforms.Grayscale(num_output_channels=3),
@@ -184,6 +184,8 @@ class ChestXRayTask(Task):
 
     def build_model(self):
         model = ResNet18()
+        print("Training Custom ResNet18 from scratch")
+
         # print("Loading pretrained ResNet50 model")
         # model = models.resnet50(weights="ResNet50_Weights.DEFAULT")
         # for params in model.parameters():

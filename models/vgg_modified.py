@@ -49,9 +49,11 @@ class VGG(nn.Module):
         return x
 
 
-def make_layers(cfg, batch_norm=False):
+def make_layers(cfg, batch_norm=False, task='cifar10'):
     layers = []
     in_channels = 3
+    if task == 'mnist' or task == 'fashionmnist':
+        layers += [nn.Conv2d(1, 3, kernel_size=3, stride=1, padding=3, bias=True)]
     for v in cfg:
         if v == 'M':
             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
@@ -74,9 +76,9 @@ cfg = {
 }
 
 
-def vgg11():
+def vgg11(num_classes=10, task='cifar10'):
     """VGG 11-layer model (configuration "A")"""
-    return VGG(make_layers(cfg['A']))
+    return VGG(make_layers(cfg['A'], task=task), num_classes=num_classes)
 
 
 def vgg11_bn(num_classes=10):

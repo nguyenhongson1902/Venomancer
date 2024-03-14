@@ -10,6 +10,7 @@ from models.resnet_cifar100_v2 import ResNet18 as ResNet18_v2
 from models.resnet_cifar100_v1 import ResNet18 as ResNet18_v1
 import models.resnet_cifar10_resnet20 as resnet
 from models.resnet_pytorch_cifar100 import resnet18
+from models import vgg
 from tasks.task import Task
 
 from utils.backdoor import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD, IMAGENET_MIN, IMAGENET_MAX
@@ -159,10 +160,16 @@ class CIFAR100Task(Task):
 
         # model = ResNet18_v1()
         # print("Training ResNet18_v1 from scratch")
+
         model = ResNet18_v2()
         checkpoint = torch.load('./pretrained/cifar100_resnet18v2_epoch_60.pt')
         model.load_state_dict(checkpoint)
         print("Training ResNet18_v2 pretrained 60 epochs")
+
+        # model = vgg.get_vgg_model('vgg11', num_classes=100, task='cifar100')
+        # checkpoint = torch.load('./pretrained/cifar100_vgg11_epoch_60.pt')
+        # model.load_state_dict(checkpoint)
+        # print("Training VGG11 pretrained 60 epochs")
 
         # model = resnet18()
         # checkpoint = torch.load("./pretrained/resnet18-200-cifar100.pth")

@@ -235,7 +235,7 @@ def make_backdoor_batch(hlpr, data, target, atkmodel, target_transform, multitar
         # noise = atkmodel(data, atktarget) * hlpr.params.eps
         noise = atkmodel(data, atktarget)
         # noise = torch.clamp(noise, -hlpr.params.eps, hlpr.params.eps)
-        atkdata = hlpr.task.clip_image(data + noise)
+        atkdata = hlpr.task.clip_image(data + noise) # Works well, March 7
         # atkdata = data + noise
     else:
         # noise = atkmodel(data) * hlpr.params.eps

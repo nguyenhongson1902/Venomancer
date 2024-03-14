@@ -12,6 +12,7 @@ from models.resnet_cifar_dba import ResNet18 as ResNet18_dba
 from models.resnet_proper_implementation import resnet20, resnet32, resnet44
 import models.resnet_cifar10_resnet20 as resnet
 from models import vgg9_only as vgg9
+from models import vgg
 from tasks.task import Task
 
 from utils.backdoor import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD, IMAGENET_MIN, IMAGENET_MAX
@@ -141,11 +142,11 @@ class CIFAR10Task(Task):
         #     checkpoint = torch.load(f, map_location="cuda")
         #     model.load_state_dict(checkpoint["state_dict"])
 
-        model = ResNet18_v2()
-        print("Train ResNet18_v2 from scratch")
+        # model = ResNet18_v2()
+        # print("Train ResNet18_v2 from scratch")
 
-        # model = ResNet18_v1()
-        # print("Train ResNet18_v1 from scratch")
+        model = ResNet18_v1()
+        print("Train ResNet18_v1 from scratch")
         
         # model = ResNet18_dba().to('cuda')
         # path = "./pretrained/model_last.pt.tar.epoch_200"
@@ -156,6 +157,9 @@ class CIFAR10Task(Task):
 
         # model = vgg9.VGG('VGG9')
         # print("Train VGG9 from scratch")
+
+        # model = vgg.get_vgg_model('vgg11', num_classes=10, task='cifar10')
+        # print("Train VGG11 from scratch")
 
         # model = resnet20()
         # checkpoint = torch.load("./pretrained/resnet20_check_point.pth")

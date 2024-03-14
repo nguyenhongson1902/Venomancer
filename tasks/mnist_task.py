@@ -8,6 +8,8 @@ from torchvision.transforms import transforms
 
 # from models.simple import SimpleNet, NetC_MNIST
 from models.resnet_mnist import ResNet18
+from models import vgg9_only as vgg9
+from models import vgg
 from tasks.task import Task
 
 
@@ -93,6 +95,12 @@ class MNISTTask(Task):
 
     def build_model(self):
         model = ResNet18()
+
+        # model = vgg9.VGG('VGG9', in_channels=1, num_classes=10)
+        # print("Train VGG9 from scratch")
+
+        # model = vgg.get_vgg_model('vgg11', num_classes=10, task='mnist')
+        # print("Train VGG11 from scratch")
 
         return model
     

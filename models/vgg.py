@@ -17,12 +17,12 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-def get_vgg_model(vgg_name):
+def get_vgg_model(vgg_name, num_classes=10, task='cifar10'):
     logging.info("GET_VGG_MODEL: Fetch {}".format(vgg_name))
     if vgg_name == 'vgg9':
         return vgg9.VGG('VGG9')
     elif vgg_name == 'vgg11':
-        return vgg_mod.vgg11()
+        return vgg_mod.vgg11(num_classes=num_classes, task=task)
     elif vgg_name == 'vgg13':
         return vgg_mod.vgg13()
     elif vgg_name == 'vgg16':

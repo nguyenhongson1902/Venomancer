@@ -11,7 +11,7 @@ class Synthesizer:
         self.task = task
         self.params = task.params
 
-    def make_backdoor_batch(self, batch: Batch, test=False, attack=True) -> Batch:
+    def make_backdoor_batch(self, batch: Batch, test=False, attack=True, test_phase=False) -> Batch:
 
         # Don't attack if only normal loss task.
         if not attack:
@@ -24,19 +24,19 @@ class Synthesizer:
                 batch.batch_size * self.params.poisoning_proportion)
 
         backdoored_batch = batch.clone()
-        self.apply_backdoor(backdoored_batch, attack_portion)
+        self.apply_backdoor(backdoored_batch, attack_portion, test_phase=test_phase)
 
         return backdoored_batch
 
-    def apply_backdoor(self, batch, attack_portion):
+    def apply_backdoor(self, batch, attack_portion, test_phase=False):
         """
         Modifies only a portion of the batch (represents batch poisoning).
 
         :param batch:
         :return:
         """
-        self.synthesize_inputs(batch=batch, attack_portion=attack_portion)
-        self.synthesize_labels(batch=batch, attack_portion=attack_portion)
+        self.synthesize_inputs(batch=batch, attack_portion=attack_portion, test_phase=test_phase)
+        self.synthesize_labels(batch=batch, attack_portion=attack_portion, test_phase=test_phase)
 
         return
 
