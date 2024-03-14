@@ -180,6 +180,5 @@ infer.ipynb
 hdd/
 pretrained/
 .wandb_key
-images/
 fixbug.txt
 notes.txt

@@ -1,4 +1,17 @@
 # Venomancer: Towards Imperceptible and Target-on-Demand Backdoor Attack in Federated Learning
 
 ## Main Pipeline
-![image](images/readme/methodology_v6.svg)
+![image](images/readme/venomancer_diagram.svg)
+
+## Installation
+- Python 3.10.10, PyTorch 2.0.0, conda 23.11.0, wandb 0.16.1
+
+- All experiments are done on a single machine with 252GB RAM, 64 Intel Xeon Gold 6242 CPUs @ 2.80GHz, and 6 NVIDIA RTX A5000 GPUs with 24GB RAM each. The utilized OS is Ubuntu 20.04.6 LTS
+
+- Run `pip install -r requirements.txt` or `python -m pip install -r requirements.txt` to install necessary packages
+
+## How to reproduce the experiments?
+- MNIST
+    - `export CUDA_VISIBLE_DEVICES=<gpu_id> && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp<exp_id>/"$mytime && python training.py --name mnist --params configs/mnist_fed.yaml --time $mytime --exp exp<exp_id>> $(pwd)"/experiments/exp<exp_id>/"$mytime"/logs.txt"`
+- CIFAR-10
+    - `export CUDA_VISIBLE_DEVICES=<gpu_id> && mytime=$(date "+%m.%d_%H.%M.%S") && mkdir -p $(pwd)"/experiments/exp<exp_id>/"$mytime && python training.py --name cifar10 --params configs/cifar10_fed.yaml --time $mytime --exp exp<exp_id> > $(pwd)"/experiments/exp<exp_id>/"$mytime"/logs.txt"`
