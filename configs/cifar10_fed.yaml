@@ -1,6 +1,6 @@
 task: CIFAR10
 synthesizer: Pattern
-
+attack_type: venomancer # venomancer, a3fl, patch
 
 batch_size: 64
 test_batch_size: 512
@@ -10,7 +10,7 @@ decay: 0.0005
 epochs: 1000
 poison_epoch: 1
 poison_epoch_stop: 1000
-save_on_epochs: [50, 100, 200, 400, 500, 600, 700, 800, 900, 1000, 1200, 1500, 1700, 1900, 2500, 3000, 4500, 5000, 5500] # [100, 200, 400, 500, 700, 900]
+save_on_epochs: [100, 200, 300, 400, 500, 700, 800, 900, 1000, 1200, 1500, 1700, 1900, 2500, 3000, 4500, 5000, 5500] # [100, 200, 400, 500, 700, 900]
 optimizer: SGD #SGD
 log_interval: 100
 device: cuda
@@ -27,15 +27,15 @@ log: True
 transform_train: True
 
 fl: True
-fl_no_models: 10
+fl_no_models: 20
 fl_local_epochs: 2
 fl_poison_epochs: 5
-fl_total_participants: 100
+fl_total_participants: 200
 fl_eta: 1 # 0.8
 fl_sample_dirichlet: True
 fl_dirichlet_alpha: 0.5
 
-fl_number_of_adversaries: 10
+fl_number_of_adversaries: 4
 fl_weight_scale: 1
 fl_adv_group_size: 2
 # fl_single_epoch_attack: 200
@@ -43,7 +43,7 @@ fl_local_updated_models: {}
 fl_weight_contribution: {}
 
 attack: ModelReplace
-defense: FedAvg # Krum, Weak_DP, Norm_Clipping, FLAME, Deepsight, Foolsgold, FLDetector, RFLBAT, FedAvg
+defense: FedAvg # Krum, Weak_DP, Norm_Clipping, RLR, FedRAD, FLAME, Deepsight, Foolsgold, FLDetector, RFLBAT, FedAvg, if don't use FedRAD, set percentage_server_data = 0.0
 fl_num_neurons: 5
 noise_mask_alpha: 0 # 0.5
 lagrange_step: 0.1
@@ -72,4 +72,19 @@ gradmask_ratio: 0.95
 
 norm_bound: 3.0 # weight diff clipping defense
 stddev: 0.002 # for weak_dp defense
-mode_krum: multi_krum # for krum defense
+mode_krum: krum # for krum defense
+percentage_server_data: 0.0 # for distillation knowledge
+
+# FOR A3FL
+trigger_lr: 0.01
+trigger_outter_epochs: 200
+dm_adv_K: 1
+dm_adv_model_count: 1
+dm_adv_epochs: 5
+noise_loss_lambda: 0.01
+trigger_size: 5
+attacker_retrain_times: 2
+lr_a3fl: 0.01
+target_lr: 0.02
+retrain_times: 2
+bkd_ratio: 0.25

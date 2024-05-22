@@ -1,6 +1,6 @@
 task: MNIST
 synthesizer: Pattern
-
+attack_type: venomancer
 
 batch_size: 64
 test_batch_size: 512
@@ -10,7 +10,7 @@ decay: 0.0005
 epochs: 1000
 poison_epoch: 1
 poison_epoch_stop: 1000
-save_on_epochs: [50, 75, 100, 150, 200, 400, 500, 700, 900, 1000, 1200, 1500, 1700, 1900, 2500, 3000, 4500, 5000, 5500] # [100, 200, 400, 500, 700, 900]
+save_on_epochs: [50, 75, 100, 150, 200, 400, 500, 600, 700, 800, 900, 1000, 1200, 1500, 1700, 1900, 2500, 3000, 4500, 5000, 5500] # [100, 200, 400, 500, 700, 900]
 optimizer: SGD
 log_interval: 100
 device: cuda
@@ -28,15 +28,15 @@ log: True
 transform_train: True
 
 fl: True
-fl_no_models: 10
+fl_no_models: 20
 fl_local_epochs: 2
 fl_poison_epochs: 5
-fl_total_participants: 100
+fl_total_participants: 200
 fl_eta: 1
 fl_sample_dirichlet: True
 fl_dirichlet_alpha: 0.5
 
-fl_number_of_adversaries: 10
+fl_number_of_adversaries: 4
 fl_weight_scale: 1
 fl_adv_group_size: 2
 # fl_single_epoch_attack: 20
@@ -44,7 +44,7 @@ fl_local_updated_models: {}
 fl_weight_contribution: {}
 
 attack: ModelReplace
-defense: FedAvg # Krum, Weak_DP, Norm_Clipping, FLAME, Deepsight, Foolsgold, FLDetector, RFLBAT, FedAvg
+defense: Norm_Clipping # Krum, Weak_DP, Norm_Clipping, FLAME, Deepsight, Foolsgold, FLDetector, RFLBAT, FedAvg
 fl_num_neurons: 5
 noise_mask_alpha: 0 # 0.5
 lagrange_step: 0.1
