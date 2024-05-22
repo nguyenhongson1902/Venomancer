@@ -11,6 +11,7 @@ from tqdm import tqdm
 from helper import Helper
 from utils.utils import *
 from utils.backdoor import IMAGENET_MIN, IMAGENET_MAX, PostTensorTransform, make_backdoor_batch, aggregate_atkmodels, pick_best_atkmodel, pick_backdoor_label_samples, get_grad_mask, apply_grad_mask, calculate_each_class_accuracy
+from utils.utils import get_lr_a3fl
 
 from attack_models.autoencoders import MNISTAutoencoder as Autoencoder
 import pytorch_ssim
@@ -1536,9 +1537,9 @@ def test(hlpr: Helper, epoch, backdoor=False, model=None, atkmodel=None):
     # assert len(class_counts) == 10, "The number of classes is not equal to 10. The problem is due to randomly sampling negative labels"
     # print("class_accuracies", class_accuracies)
     # print("class_counts", class_counts)
-    for tar, cor in class_accuracies.items():
+    for tar, corr in class_accuracies.items():
         if class_counts[tar] != 0:
-            class_accuracies[tar] = cor / class_counts[tar]
+            class_accuracies[tar] = corr / class_counts[tar]
 
     if atkmodel:
         test_backdoor_loss /= len(hlpr.task.test_loader.dataset)
@@ -1605,9 +1606,9 @@ def test_with_patch(hlpr: Helper, epoch, model=None, test=True):
     acc = correct / len(hlpr.task.test_loader.dataset)
 
     assert len(class_counts) in [15, 10, 200, 0, 100], "The number of classes is not equal to 15 (chestxray) or 10 (mnist, fashionmnist, cifar10) or 200 (tinyimagenet) or 100 (cifar100) or 0 (no attack). The problem is due to randomly sampling negative labels"
-    for tar, cor in class_accuracies.items():
+    for tar, corr in class_accuracies.items():
         if class_counts[tar] != 0:
-            class_accuracies[tar] = cor / class_counts[tar]
+            class_accuracies[tar] = corr / class_counts[tar]
 
     test_backdoor_loss /= len(hlpr.task.test_loader.dataset)
     backdoor_acc = backdoor_correct / len(hlpr.task.test_loader.dataset)
@@ -1615,6 +1616,61 @@ def test_with_patch(hlpr: Helper, epoch, model=None, test=True):
     print('\nTest [{}]: Clean Loss {:.4f}, Backdoor Loss {:.4f}, Clean Accuracy {:.4f}, Backdoor Accuracy {:.4f}'.format(epoch,
             test_loss, test_backdoor_loss, acc, backdoor_acc))
     return acc, backdoor_acc, test_loss, test_backdoor_loss, class_accuracies
+    # return acc, backdoor_acc, test_loss, test_backdoor_loss, None
+
+def test_a3fl(hlpr, epoch):
+    criterion = torch.nn.CrossEntropyLoss(label_smoothing = 0.001)
+    model = hlpr.task.model # get the global model
+    model.eval()
+
+    class_accuracies = {}
+    class_counts= {}
+    # count = 0
+    for i in range(hlpr.params.num_classes):
+        class_counts[i] = 0
+
+    with torch.no_grad():
+        data_source = hlpr.task.test_loader
+        total_loss = 0 # for calculating clean loss
+        correct = 0 # for calculating clean acc
+        backdoor_correct = 0 # for calculating backdoor loss
+        backdoor_loss = 0 # for calculating backdoor loss
+        backdoor_correct = 0 # for calculating backdoor loss
+        num_data = 0.
+        for batch_id, batch in tqdm(enumerate(data_source)):
+            data, targets = batch
+            data, targets = data.cuda(), targets.cuda()
+            output = model(data)
+            total_loss += criterion(output, targets).item()
+            pred = output.data.max(1)[1] 
+            correct += pred.eq(targets.data.view_as(pred)).cpu().sum().item()
+                
+            # backdoor part
+            backdoor_data, backdoor_targets = hlpr.attack.poison_input(data, targets, eval=True)
+            backdoor_output = model(backdoor_data)
+            backdoor_loss += criterion(backdoor_output, backdoor_targets).item()
+            backdoor_pred = backdoor_output.data.max(1)[1] 
+            backdoor_correct += backdoor_pred.eq(backdoor_targets.data.view_as(pred)).cpu().sum().item()
+
+            calculate_each_class_accuracy(backdoor_pred, backdoor_targets, class_accuracies, class_counts)
+
+            num_data += output.size(0) 
+    acc = 100.0 * (float(correct) / float(num_data)) # clean acc
+    loss = total_loss / float(num_data) # clean loss
+
+    backdoor_acc = 100.0 * (float(backdoor_correct) / float(num_data)) # backdoor acc
+    backdoor_loss = backdoor_loss / float(num_data) # backdoor loss
+
+    assert len(class_counts) in [15, 10, 200, 0, 100], "The number of classes is not equal to 15 (chestxray) or 10 (mnist, fashionmnist, cifar10) or 200 (tinyimagenet) or 100 (cifar100) or 0 (no attack). The problem is due to randomly sampling negative labels"
+    for tar, corr in class_accuracies.items():
+        if class_counts[tar] != 0:
+            class_accuracies[tar] = corr / class_counts[tar]
+    print('\nTest [{}]: Clean Loss {:.4f}, Backdoor Loss {:.4f}, Clean Accuracy {:.4f}, Backdoor Accuracy {:.4f}'.format(epoch,
+            loss, backdoor_loss, acc, backdoor_acc))
+
+    model.train()
+    # return acc, backdoor_acc, loss, backdoor_loss
+    return acc, backdoor_acc, loss, backdoor_loss, class_accuracies
     
 def train_with_patch(hlpr: Helper, local_epoch, local_model, local_optimizer, local_train_loader, attack=True, global_model=None, post_transforms=None):
     if attack:
@@ -1685,6 +1741,42 @@ def train_with_patch(hlpr: Helper, local_epoch, local_model, local_optimizer, lo
         cleanloss = sum(cleanlosslist) / local_dataset_size
         return cleanloss
 
+def train_malicious_a3fl(hlpr, participant_id, model, epoch):
+    attacker_criterion = torch.nn.CrossEntropyLoss(label_smoothing = 0.001)
+    lr = get_lr_a3fl(hlpr, epoch)
+    optimizer = torch.optim.SGD(model.parameters(), lr=lr,
+        momentum=0.9,
+        weight_decay=0.0005)
+    clean_model = copy.deepcopy(model)
+    for internal_epoch in range(hlpr.params.attacker_retrain_times):
+        total_loss = 0.0
+        for inputs, labels in hlpr.task.fl_train_loaders[participant_id]:
+            inputs, labels = inputs.cuda(), labels.cuda()
+            inputs, labels = hlpr.attack.poison_input(inputs, labels)
+            output = model(inputs)
+            loss = attacker_criterion(output, labels)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+def train_benign_a3fl(hlpr, participant_id, model, epoch):
+    criterion = torch.nn.CrossEntropyLoss(label_smoothing = 0.001)
+    lr = get_lr_a3fl(hlpr, epoch)
+    optimizer = torch.optim.SGD(model.parameters(), lr=lr,
+        momentum=0.9,
+        weight_decay=0.0005)
+    for internal_epoch in range(hlpr.params.retrain_times):
+        total_loss = 0.0
+        for inputs, labels in hlpr.task.fl_train_loaders[participant_id]:
+            inputs, labels = inputs.cuda(), labels.cuda()
+            output = model(inputs)
+            loss = criterion(output, labels)
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+
 def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotoxin):
     global_model = hlpr.task.model
     global_model.train()
@@ -1694,6 +1786,12 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
 
     participated_clients = {} # Map user id to its local model
     malicious_local_models = {}
+
+    if hlpr.params.attack_type == "a3fl":
+        first_adversary = 0
+        hlpr.task.copy_params(global_model, local_model)
+        hlpr.attack.search_trigger(local_model, hlpr.task.fl_train_loaders[first_adversary], 'outter', first_adversary, epoch)
+
     for user in tqdm(round_participants):
         hlpr.task.copy_params(global_model, local_model)
         local_optimizer = hlpr.task.make_optimizer(local_model)
@@ -1706,7 +1804,12 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
             atkmodel, tgtmodel, tgtoptimizer = atkmodels_dict[user.user_id]
             # atkmodel.train() # Starts from exp 66
             # target_transform = hlpr.task.target_transform
-            target_transform = hlpr.task.sample_negative_labels
+            assert hlpr.params.attack_type in ["venomancer", "patch", "a3fl"]
+            if hlpr.params.attack_type == "venomancer":
+                target_transform = hlpr.task.sample_negative_labels
+            # elif hlpr.params.attack_type == "a3fl":
+                # target_transform = hlpr.task.target_transform # Option for 1 target label
+                # target_transform = hlpr.task.sample_negative_labels
             
             # mask_grad_list = get_grad_mask(hlpr, local_model, local_optimizer, user.train_loader, history_grad_list_neurotoxin, ratio=hlpr.params.gradmask_ratio)
 
@@ -1724,9 +1827,6 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
                 #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
                 #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms, threshold_ba=0.85)
                 
-                atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
-                                                         atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
-                                                         clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
                 
                 # atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss_check_durability(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
                 #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
@@ -1741,10 +1841,17 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
                 #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
                 
                 # atkloss, cleanloss, backdoorloss = train_with_noise_patch(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
-                #                                          atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
-                #                                          clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
-                
-                atkmodel.load_state_dict(tgtmodel.state_dict())
+                #                                             atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
+                #                                             clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
+                if hlpr.params.attack_type == "venomancer":
+                    atkloss, cleanloss, backdoorloss = train_like_a_gan_with_visual_loss(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model,
+                                                            atkmodel=atkmodel, tgtmodel=tgtmodel, tgtoptimizer=tgtoptimizer, target_transform=target_transform,
+                                                            clip_image=hlpr.task.clip_image, post_transforms=post_transforms)
+                    atkmodel.load_state_dict(tgtmodel.state_dict())
+                elif hlpr.params.attack_type == "a3fl":
+                    train_malicious_a3fl(hlpr, user.user_id, local_model, epoch)
+                elif hlpr.params.attack_type == "patch":
+                    backdoorloss = train_with_patch(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model)
 
                 # cleanloss, backdoorloss = train_with_patch(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model, post_transforms=post_transforms)
                 # backdoorloss = train_with_patch(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=True, global_model=global_model, post_transforms=post_transforms)
@@ -1758,9 +1865,12 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
 
             logger.warning(f"Non-compromised user: {user.user_id} in run_fl_round function {epoch}")
             for local_epoch in range(hlpr.params.fl_local_epochs):
-                cleanloss = train(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=False, global_model=global_model, post_transforms=post_transforms)
-
-                # cleanloss = train_with_patch(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=False, global_model=global_model, post_transforms=post_transforms)
+                if hlpr.params.attack_type == "venomancer":
+                    cleanloss = train(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=False, global_model=global_model, post_transforms=post_transforms)
+                elif hlpr.params.attack_type == "patch":
+                    cleanloss = train_with_patch(hlpr, local_epoch, local_model, local_optimizer, user.train_loader, attack=False, global_model=global_model, post_transforms=post_transforms)
+                elif hlpr.params.attack_type == "a3fl":
+                    train_benign_a3fl(hlpr, user.user_id, local_model, epoch)
         
             local_update = hlpr.attack.get_fl_update(local_model, global_model)
         # hlpr.save_update(model=local_update, userID=user.user_id)
@@ -1775,21 +1885,44 @@ def run_fl_round(hlpr: Helper, epoch, atkmodels_dict, history_grad_list_neurotox
         print("Picking the best atkmodel")
         best_atkmodel, best_tgtmodel, best_tgtoptimizer, local_backdoor_acc = pick_best_atkmodel(hlpr, atkmodels_dict, round_participants, malicious_local_models)
 
-    # Apply defenses here
+    # Apply defenses here (before aggregation)
     if hlpr.params.defense.lower() == "norm_clipping":
         print("Apply norm clipping") # DEBUG
         hlpr.defense.clip_weight_diff()
+        hlpr.defense.aggr(weight_accumulator, global_model)
+        hlpr.task.update_global_model(weight_accumulator, global_model)
     elif hlpr.params.defense.lower() == "krum":
         print(f"Apply Krum, mode {hlpr.params.mode_krum}") # DEBUG
         hlpr.defense.run(participated_clients)
-
+        hlpr.defense.aggr(weight_accumulator, global_model)
+        hlpr.task.update_global_model(weight_accumulator, global_model)
+    elif hlpr.params.defense.lower() == "rlr":
+        print(f"Apply RLR") # DEBUG
+        hlpr.defense.run(global_model, participated_clients)
+        hlpr.defense.aggr(weight_accumulator, global_model)
+        hlpr.task.update_global_model(weight_accumulator, global_model)
+    elif hlpr.params.defense.lower() == "deepsight":
+        print(f"Apply Deepsight") # DEBUG
+        hlpr.defense.aggr(weight_accumulator, global_model)
+        hlpr.task.update_global_model(weight_accumulator, global_model)
+    elif hlpr.params.defense.lower() == "fedrad":
+        print(f"Apply FedRAD. Required distillation knowledge on server") # DEBUG
+        hlpr.defense.aggr(weight_accumulator, global_model) # After this, global_model gets updated
+    elif hlpr.params.defense.lower() == "rflbat":
+        print(f"Apply RFLBAT") # DEBUG
+        hlpr.defense.aggr(weight_accumulator, global_model)
+        hlpr.task.update_global_model(weight_accumulator, global_model)
+    elif hlpr.params.defense.lower() == "fedavg":
+        print(f"Apply FedAvg") # DEBUG
+        hlpr.defense.aggr(weight_accumulator, global_model)
+        hlpr.task.update_global_model(weight_accumulator, global_model)
     # hlpr.attack.perform_attack(global_model, epoch)
-    hlpr.defense.aggr(weight_accumulator, global_model)
+    # hlpr.defense.aggr(weight_accumulator, global_model) # use this if don't want to repeat like above
 
     # import IPython; IPython.embed(); exit();
-    hlpr.task.update_global_model(weight_accumulator, global_model)
+    # hlpr.task.update_global_model(weight_accumulator, global_model) # use this if don't want to repeat like above
 
-    # Some defenses can be applied here
+    # Some defenses can be applied here (after aggregation)
     if hlpr.params.defense.lower() == "weak_dp":
         print("Apply weak DP") # DEBUG
         # hlpr.defense.clip_weight_diff()
@@ -1817,11 +1950,21 @@ def run(hlpr: Helper):
         atkmodel, tgtmodel, tgtoptimizer, local_backdoor_acc = run_fl_round(hlpr, epoch, atkmodels_dict, history_grad_list_neurotoxin)
 
         # atkmodel.eval() # Starts from exp66
-        clean_acc, backdoor_acc, clean_loss, backdoor_loss, visual_diff, class_accuracies = test(hlpr, epoch, backdoor=True, atkmodel=tgtmodel) # Use tgtmodel (currently in the eval mode)
-        # clean_acc, backdoor_acc, clean_loss, backdoor_loss, class_accuracies = test_with_patch(hlpr, epoch, test=True)
+        if hlpr.params.attack_type == "venomancer":
+            clean_acc, backdoor_acc, clean_loss, backdoor_loss, visual_diff, class_accuracies = test(hlpr, epoch, backdoor=True, atkmodel=tgtmodel) # Use tgtmodel (currently in the eval mode)
+        elif hlpr.params.attack_type == "patch":
+            clean_acc, backdoor_acc, clean_loss, backdoor_loss, class_accuracies = test_with_patch(hlpr, epoch, test=True)
+        elif hlpr.params.attack_type == "a3fl":
+            clean_acc, backdoor_acc, clean_loss, backdoor_loss, class_accuracies = test_a3fl(hlpr, epoch) # multi-targets
+            # clean_acc, backdoor_acc, clean_loss, backdoor_loss = test_a3fl(hlpr, epoch) # 1 target label
+            
+        else:
+            raise ValueError("Invalid attack type")
         # wandb log acc and backdoor_acc, clean_loss, backdoor_loss
-        wandb.log({"Clean Accuracy": clean_acc, "Backdoor Accuracy": backdoor_acc, "Clean Loss": clean_loss, "Backdoor Loss": backdoor_loss, "Visual Difference": visual_diff}, step=epoch)
-        # wandb.log({"Clean Accuracy": clean_acc, "Backdoor Accuracy": backdoor_acc, "Clean Loss": clean_loss, "Backdoor Loss": backdoor_loss}, step=epoch)
+        if hlpr.params.attack_type == "venomancer":
+            wandb.log({"Clean Accuracy": clean_acc, "Backdoor Accuracy": backdoor_acc, "Clean Loss": clean_loss, "Backdoor Loss": backdoor_loss, "Visual Difference": visual_diff}, step=epoch)
+        elif hlpr.params.attack_type in ["patch", "a3fl"]:
+            wandb.log({"Clean Accuracy": clean_acc, "Backdoor Accuracy": backdoor_acc, "Clean Loss": clean_loss, "Backdoor Loss": backdoor_loss}, step=epoch)
 
         for target, accuracy in class_accuracies.items():
             class_accuracies_log[f"Class {target}"] = accuracy
@@ -1861,7 +2004,8 @@ if __name__ == '__main__':
         key = f.readline().strip()
 
     # You need to initialize your wandb HERE
-    
+    wandb.login(key=key)
+    wandb.init(project="backdoor-attack", entity="nguyenhongsonk62hust", name=f"{params['exp']}_{params['name']}-{params['current_time']}", dir="./hdd/home/ssd_data/Son/Venomancer/wandb/wandb")
     logger.warning(create_table(params)) # Print the table of parameters to the terminal, showing as warnings
     try:
         run(helper)
