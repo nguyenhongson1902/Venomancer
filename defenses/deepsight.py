@@ -38,14 +38,24 @@ class Deepsight(FedAvg):
         # layer_name = 'linear9' if 'MNIST' in self.params.task else 'fc' # For NetC_MNIST
         layer_name = "linear" if "cifar10" == self.params.task.lower() else "fc"
         num_classes = 200 if 'imagenet' == self.params.task.lower() else 10
+        
+        assert dim == 32, "dim is not 32"
+        assert num_channel == 3, "num_channel is not 3"
+        assert layer_name == "linear", "layer_name is not linear"
+        assert num_classes == 10, "num_classes is not 10"
 
         # Threshold exceedings and NEUPs
         TEs, NEUPs, ed = [], [], []
         # for i in range(self.params.fl_no_models):
             # file_name = f'{self.params.folder_path}/saved_updates/update_{i}.pth'
             # loaded_params = torch.load(file_name)
+        fl_no_models = len(self.params.fl_local_updated_models)
+        idx2user_id = {} # int: int
+        idx = 0
         for user_id, local_update in self.params.fl_local_updated_models.items():
-            loaded_params = local_update
+            idx2user_id[idx] = user_id
+            idx += 1
+            loaded_params = local_update # local_update: Dict[str, torch.Tensor]
 
             ed = np.append(ed, self.get_update_norm(loaded_params))
             UPs = abs(loaded_params[f'{layer_name}.bias'].cpu().numpy()) +\
@@ -93,7 +103,8 @@ class Deepsight(FedAvg):
                     with torch.no_grad():
                         output_local = local_model(x)
                         output_global = global_model(x)
-                        if 'mnist' != self.params.task.lower():
+                        assert self.params.task.lower() == 'cifar10', "The task is not CIFAR10"
+                        if self.params.task.lower() == 'cifar10':
                             output_local = torch.softmax(output_local, dim=1)
                             output_global = torch.softmax(output_global, dim=1)
                     temp = torch.div(output_local, output_global+1e-30) # avoid zero-value
@@ -102,7 +113,7 @@ class Deepsight(FedAvg):
 
                 DDif /= self.num_samples
                 DDifs = np.append(DDifs, DDif.cpu().numpy())
-        DDifs = np.reshape(DDifs, (self.num_seeds, self.params.fl_no_models, -1))
+        DDifs = np.reshape(DDifs, (self.num_seeds, fl_no_models, -1))
         logger.warning("Deepsight: Finish measuring DDif")
 
         # cosine distance
@@ -114,26 +125,33 @@ class Deepsight(FedAvg):
             loaded_params = local_update
             for name, data in loaded_params.items():
                 if layer_name in name:
-                    temp = local_model.state_dict()[name].cpu().numpy()
+                    # temp = local_model.state_dict()[name].cpu().numpy()
+                    temp = local_update[name].cpu().numpy()
                     local_params = np.append(local_params, temp)
-        cd = smp.cosine_distances(local_params.reshape(self.params.fl_no_models, -1))
+        cd = smp.cosine_distances(local_params.reshape(fl_no_models, -1))
         logger.warning("Deepsight: Finish calculating cosine distance")
 
         # classification
         cosine_clusters = hdbscan.HDBSCAN(metric='precomputed').fit_predict(cd)
-        cosine_cluster_dists = dists_from_clust(cosine_clusters, self.params.fl_no_models)
+        cosine_cluster_dists = dists_from_clust(cosine_clusters, fl_no_models)
 
-        neup_clusters = hdbscan.HDBSCAN().fit_predict(np.reshape(NEUPs, (-1,1)))
-        neup_cluster_dists = dists_from_clust(neup_clusters, self.params.fl_no_models)
+        # neup_clusters = hdbscan.HDBSCAN().fit_predict(np.reshape(NEUPs, (-1,1)))
+        neup_clusters = hdbscan.HDBSCAN().fit_predict(np.reshape(NEUPs, (-1,num_classes)))
+        neup_cluster_dists = dists_from_clust(neup_clusters, fl_no_models)
 
         ddif_clusters, ddif_cluster_dists = [],[]
         for i in range(self.num_seeds):
-            ddif_cluster_i = hdbscan.HDBSCAN().fit_predict(np.reshape(DDifs[i], (-1,1)))
+            print(f"DDifs.shape", DDifs.shape)
+            print(f"DDifs[{i}].shape", DDifs[i].shape)
+            assert np.reshape(DDifs[i], (-1,num_classes)).shape[0], np.reshape(DDifs[i], (-1,num_classes)).shape[1] == (fl_no_models, num_classes)
+            # ddif_cluster_i = hdbscan.HDBSCAN().fit_predict(np.reshape(DDifs[i], (-1,1)))
+            print("np.reshape(DDifs[i], (-1,num_classes))", np.reshape(DDifs[i], (-1,num_classes)).shape)
+            ddif_cluster_i = hdbscan.HDBSCAN().fit_predict(np.reshape(DDifs[i], (-1,num_classes)))
             # ddif_clusters = np.append(ddif_clusters, ddif_cluster_i)
             ddif_cluster_dists = np.append(ddif_cluster_dists,
-                dists_from_clust(ddif_cluster_i, self.params.fl_no_models))
+                dists_from_clust(ddif_cluster_i, fl_no_models))
         merged_ddif_cluster_dists = np.mean(np.reshape(ddif_cluster_dists,
-                            (self.num_seeds, self.params.fl_no_models, self.params.fl_no_models)),
+                            (self.num_seeds, fl_no_models, fl_no_models)),
                             axis=0)
         merged_distances = np.mean([merged_ddif_cluster_dists,
                                     neup_cluster_dists,
@@ -141,9 +159,9 @@ class Deepsight(FedAvg):
         clusters = hdbscan.HDBSCAN(metric='precomputed').fit_predict(merged_distances)
         positive_counts = {}
         total_counts = {}
-        ## TODO: DEBUG
+        
         for i, c in enumerate(clusters):
-            if c==-1:
+            if c == -1:
                 continue
             if c in positive_counts:
                 positive_counts[c] += 1 if labels[i] else 0
@@ -161,19 +179,31 @@ class Deepsight(FedAvg):
         for i, c in enumerate(clusters):
             if i < self.params.fl_number_of_adversaries:
                 adv_clip.append(st/ed[i])
-            if c!=-1 and positive_counts[c] / total_counts[c] < self.tau:
-                file_name = f'{self.params.folder_path}/saved_updates/update_{i}.pth'
-                loaded_params = torch.load(file_name)
+            if c != -1 and positive_counts[c] / total_counts[c] < self.tau:
+                # file_name = f'{self.params.folder_path}/saved_updates/update_{i}.pth'
+                # loaded_params = torch.load(file_name)
+                user_id = idx2user_id[i]
+                loaded_params = self.params.fl_local_updated_models[user_id]
                 if 1 > st/ed[i]:
                     for name, data in loaded_params.items():
                         if self.check_ignored_weights(name):
                             continue
                         data.mul_(st/ed[i])
-                self.accumulate_weights(weight_accumulator, loaded_params)
+                
+                weight_contrib_user = self.params.fl_weight_contribution[user_id]
+                self.accumulate_weights(weight_accumulator, \
+                                    {key: (loaded_params[key] * weight_contrib_user).to(self.params.device) for \
+                                        key in loaded_params})
+                # self.accumulate_weights(weight_accumulator, loaded_params)
             else:
-                discard_name.append(i)
+                user_id = idx2user_id[i]
+                # discard_name.append(i)
+                discard_name.append(user_id)
         logger.warning(f"Deepsight: Discard update from client {discard_name}")
         logger.warning(f"Deepsight: clip for adv {adv_clip}")
+
+        global_model.train()
+
         return weight_accumulator
 
 class NoiseDataset(torch.utils.data.Dataset):
@@ -188,10 +218,21 @@ class NoiseDataset(torch.utils.data.Dataset):
         noise = torch.rand(self.size)
         return noise
 
+# def dists_from_clust(clusters, N):
+#     pairwise_dists = np.ones((N,N))
+#     for i in clusters:
+#         for j in clusters:
+#             if i==j:
+#                 pairwise_dists[i][j]=1
+#     return pairwise_dists
+
+
 def dists_from_clust(clusters, N):
-    pairwise_dists = np.ones((N,N))
-    for i in clusters:
-        for j in clusters:
-            if i==j:
-                pairwise_dists[i][j]=1
+    pairwise_dists = np.zeros((N,N))
+    for i in range(N):
+        for j in range(i, N):
+            if clusters[i] == clusters[j]:
+                pairwise_dists[i][j] = pairwise_dists[j][i] = 0
+            else:
+                pairwise_dists[i][j] = pairwise_dists[j][i] = 1
     return pairwise_dists
