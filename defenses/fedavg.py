@@ -46,7 +46,7 @@ class FedAvg:
         for name, value in local_update.items():
             weight_accumulator[name].add_(value)
     
-    def get_update_norm(self, local_update):
+    def get_update_norm(self, local_update): # local_update: Dict[str, torch.Tensor]
         squared_sum = 0
         for name, value in local_update.items():
             if 'tracked' in name or 'running' in name:
