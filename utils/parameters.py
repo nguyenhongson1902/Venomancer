@@ -3,6 +3,7 @@ from dataclasses import dataclass, asdict
 from typing import List, Dict
 import logging
 import torch
+from torch.utils.data import Subset
 logger = logging.getLogger('logger')
 
 @dataclass
@@ -43,6 +44,7 @@ class Params:
     input_shape = None # (channels, height, width)
 
     # attack params
+    attack_type: str = 'venomancer'
     backdoor: bool = False
     backdoor_label: int = 8
     poisoning_proportion: float = 1.0  # backdoors proportion in backdoor loss
@@ -134,6 +136,25 @@ class Params:
     norm_bound: float = 3.0 # for Norm_Clipping defense
     stddev: float = 0.158 # for Weak_DP defense
     mode_krum: str = None # for Krum defense
+    server_dataset: Subset = None # for distillation knowledge
+    percentage_server_data: float = 0.0 # for distillation knowledge
+
+    # FOR A3FL
+    trigger_lr: float = None
+    trigger_outter_epochs: int = None
+    dm_adv_K: int = None
+    dm_adv_model_count: int = None
+    dm_adv_epochs: int = None
+    noise_loss_lambda: int = None
+    trigger_size: int = None
+    attacker_retrain_times: int = None
+    lr_a3fl: float = None
+    target_lr: float = None
+    retrain_times: int = None
+    bkd_ratio: float = None
+
+    # FOR F3BA
+    
 
     def __post_init__(self):
         # enable logging anyways when saving statistics
