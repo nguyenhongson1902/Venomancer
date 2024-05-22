@@ -14,45 +14,48 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 logging.getLogger('matplotlib.font_manager').disabled = True
 
 class RFLBAT(FedAvg):
-    current_epoch: int = 0
+    current_epoch: int = 0 # for drawing
 
     def __init__(self, params) -> None:
         super().__init__(params)
-        self.current_epoch = self.params.start_epoch
+        self.current_epoch = self.params.start_epoch # for drawing
 
     def aggr(self, weight_accumulator, _):
         eps1 = 10
         eps2 = 4
-        dataAll = []
-        for i in range(self.params.fl_total_participants):
-            file_name = '{0}/saved_updates/update_{1}.pth'\
-                .format(self.params.folder_path,i)
-            dataList = []
-            if os.path.exists(file_name):
-                loaded_params = torch.load(file_name)
-                for name, data in loaded_params.items():
-                    if 'MNIST' in self.params.task or \
-                        'fc' in name or 'layer4.1.conv' in name:
-                        dataList.extend(((data.cpu().numpy())\
-                            .flatten()).tolist())
-                dataAll.append(dataList)
+        data_all = []
+        idx2user_id = {}
+        idx = 0
+        for user_id, local_update in self.params.fl_local_updated_models.items():
+            idx2user_id[idx] = user_id
+            idx += 1
+
+            data_list = []
+            loaded_params = local_update
+
+            assert self.params.task.lower() == "cifar10", "Only support CIFAR10 for now."
+            for name, data in loaded_params.items():
+                if "layer4.1.conv" in name:
+                    data_list.extend(((data.cpu().numpy()).flatten()).tolist())
+            data_all.append(data_list)
+        
         pca = PCA(n_components=2) #instantiate
-        pca = pca.fit(dataAll)
-        X_dr = pca.transform(dataAll)
+        pca = pca.fit(data_all)
+        X_dr = pca.transform(data_all)
 
         # Save figure
-        plt.figure()
-        plt.scatter(X_dr[0:self.params.fl_number_of_adversaries,0], 
-            X_dr[0:self.params.fl_number_of_adversaries,1], c='red')
-        plt.scatter(X_dr[self.params.fl_number_of_adversaries:self.params.fl_total_participants,0], 
-            X_dr[self.params.fl_number_of_adversaries:self.params.fl_total_participants,1], c='green')
-        # plt.scatter(X_dr[self.params.fl_total_participants:,0], X_dr[self.params.fl_total_participants:,1], c='black')
-        folderpath = '{0}/RFLBAT'.format(self.params.folder_path)
-        if not os.path.exists(folderpath):
-            os.makedirs(folderpath)
-        figname = '{0}/PCA_E{1}.jpg'.format(folderpath, self.current_epoch)
-        plt.savefig(figname)
-        logger.info(f"RFLBAT: Save figure {figname}.")
+        # plt.figure()
+        # plt.scatter(X_dr[0:self.params.fl_number_of_adversaries,0], 
+        #     X_dr[0:self.params.fl_number_of_adversaries,1], c='red')
+        # plt.scatter(X_dr[self.params.fl_number_of_adversaries:self.params.fl_total_participants,0], 
+        #     X_dr[self.params.fl_number_of_adversaries:self.params.fl_total_participants,1], c='green')
+        # # plt.scatter(X_dr[self.params.fl_total_participants:,0], X_dr[self.params.fl_total_participants:,1], c='black')
+        # folderpath = '{0}/RFLBAT'.format(self.params.folder_path)
+        # if not os.path.exists(folderpath):
+        #     os.makedirs(folderpath)
+        # figname = '{0}/PCA_E{1}.jpg'.format(folderpath, self.current_epoch)
+        # plt.savefig(figname)
+        # logger.info(f"RFLBAT: Save figure {figname}.")
 
         # Compute sum eu distance
         eu_list = []
@@ -70,7 +73,7 @@ class RFLBAT(FedAvg):
                 accept.append(i)
                 x1 = np.append(x1, X_dr[i])
             else:
-                logger.info("RFLBAT: discard update {0}".format(i))
+                logger.info("RFLBAT: discard update of user_id {0}".format(idx2user_id[i]))
         x1 = np.reshape(x1, (-1, X_dr.shape[1]))
         num_clusters = gap_statistics(x1, \
             num_sampling=5, K_max=10, n=len(x1))
@@ -86,7 +89,7 @@ class RFLBAT(FedAvg):
             temp = []
             for j in range(len(predicts)):
                 if predicts[j] == i:
-                    temp.append(dataAll[accept[j]])
+                    temp.append(data_all[accept[j]])
             if len(temp) <= 1:
                 v_med.append(1)
                 continue
@@ -116,21 +119,25 @@ class RFLBAT(FedAvg):
             if eu_list[i] < eps2 * np.median(eu_list):
                 temp.append(accept[i])
             else:
-                logger.info("RFLBAT: discard update {0}"\
-                    .format(i))
+                logger.info("RFLBAT: discard update of user_id {0}"\
+                    .format(idx2user_id[i]))
         accept = temp
+
+        accept_user_id = [idx2user_id[i] for i in accept]
         logger.info("RFLBAT: the final clients accepted are {0}"\
-            .format(accept))
+            .format(accept_user_id))
 
         # aggregate
-        for i in range(self.params.fl_total_participants):
-            if i in accept:
-                update_name = '{0}/saved_updates/update_{1}.pth'\
-                    .format(self.params.folder_path, i)
-                loaded_params = torch.load(update_name)
+        # for i in range(self.params.fl_total_participants):
+        for user_id, local_update in self.params.fl_local_updated_models.items():
+            if user_id in accept_user_id:
+                # update_name = '{0}/saved_updates/update_{1}.pth'\
+                #     .format(self.params.folder_path, i)
+                # loaded_params = torch.load(update_name)
+                loaded_params = local_update
                 self.accumulate_weights(weight_accumulator, 
-                    {key:loaded_params[key].to(self.params.device) for key \
+                    {key:(loaded_params[key] * self.params.fl_weight_contribution[user_id]).to(self.params.device) for key \
                     in loaded_params})
-        self.current_epoch += 1
+        self.current_epoch += 1 # for drawing
 
 
