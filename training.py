@@ -1999,13 +1999,9 @@ if __name__ == '__main__':
 
     helper = Helper(params)
      # Transform original labels to target labels, default: all2one
-    file_path = ".wandb_key"
-    with open(file_path, "r") as f:
-        key = f.readline().strip()
 
     # You need to initialize your wandb HERE
-    wandb.login(key=key)
-    wandb.init(project="backdoor-attack", entity="nguyenhongsonk62hust", name=f"{params['exp']}_{params['name']}-{params['current_time']}", dir="./hdd/home/ssd_data/Son/Venomancer/wandb/wandb")
+    
     logger.warning(create_table(params)) # Print the table of parameters to the terminal, showing as warnings
     try:
         run(helper)
