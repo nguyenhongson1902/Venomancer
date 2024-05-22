@@ -11,13 +11,13 @@ transform_to_tensor = transforms.ToTensor()
 
 
 class PatternSynthesizer(Synthesizer):
-    # pattern_tensor: torch.Tensor = torch.tensor([
-    #     [1., 0., 1.],
-    #     [-10., 1., -10.],
-    #     [-10., -10., 0.],
-    #     [-10., 1., -10.],
-    #     [1., 0., 1.]
-    # ])
+    pattern_tensor: torch.Tensor = torch.tensor([
+        [1., 0., 1.],
+        [-10., 1., -10.],
+        [-10., -10., 0.],
+        [-10., 1., -10.],
+        [1., 0., 1.]
+    ])
 
     pattern_tensors = {0: torch.Tensor([[-10.,  1., -10.],
                         [  1.,  0.,   1.],
