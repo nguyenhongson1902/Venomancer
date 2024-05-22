@@ -182,3 +182,7 @@ pretrained/
 .wandb_key
 fixbug.txt
 notes.txt
+wandb/
+neurips.ipynb
+rebuttal.ipynb
+.wandb_key_copy
