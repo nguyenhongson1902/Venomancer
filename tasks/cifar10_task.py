@@ -106,6 +106,18 @@ class CIFAR10Task(Task):
             train=True,
             download=True,
             transform=transform_train)
+        
+        if self.params.percentage_server_data > 0:
+            print("Getting a part of the training set for distillation knowledge on server (FedRAD)")
+            mask = torch.rand(len(self.train_dataset)) < self.params.percentage_server_data
+            server_data_indices = torch.where(mask)[0] # indices where mask is True
+            train_data_indices = torch.where(~mask)[0] # indices where mask is False
+
+            server_dataset = Subset(self.train_dataset, server_data_indices.tolist())
+            self.params.server_dataset = server_dataset # Save server_data (distillation data) to server_data parameter
+            self.train_dataset = Subset(self.train_dataset, train_data_indices.tolist())
+        else:
+            print("No need to have server dataset for distillation")
 
         self.train_loader = DataLoader(self.train_dataset,
                                            batch_size=self.params.batch_size,
