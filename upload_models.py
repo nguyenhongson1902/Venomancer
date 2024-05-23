@@ -121,7 +121,8 @@ for run_id in tqdm(run_id_pool.keys()):
     run = api.run(run_id_pool[run_id])
     time_to_find = run.name.split('-')[-1]
 
-    wandb.login(key="917b44927c77ee61ea91005724c9bd9b470f116a")
+    wandb_key = "" # Change this
+    wandb.login(key=wandb_key)
     wandb.init(id=run_id_pool[run_id].split('/')[-1], resume='allow', project="backdoor-attack", entity="nguyenhongsonk62hust", dir="./hdd/home/ssd_data/Son/Venomancer/wandb/wandb")
     
     # Create an artifact for the model
