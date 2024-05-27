@@ -1,4 +1,4 @@
-# Venomancer: Towards Imperceptible and Target-on-Demand Backdoor Attack in Federated Learning
+# Venomancer: Towards Imperceptible and Target-on-Demand Backdoor Attacks in Federated Learning
 
 ## Venomancer framework
 ![image](images/readme/venomancer_diagram.svg)
