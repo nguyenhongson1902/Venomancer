@@ -2002,6 +2002,7 @@ if __name__ == '__main__':
 
     # You need to initialize your wandb HERE
     
+    
     logger.warning(create_table(params)) # Print the table of parameters to the terminal, showing as warnings
     try:
         run(helper)
