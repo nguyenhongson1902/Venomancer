@@ -29,7 +29,7 @@ transform_train: True
 fl: True
 fl_no_models: 20
 fl_local_epochs: 2
-fl_poison_epochs: 5
+fl_poison_epochs: 2
 fl_total_participants: 200
 fl_eta: 1 # 0.8
 fl_sample_dirichlet: True
@@ -72,8 +72,8 @@ gradmask_ratio: 0.95
 
 norm_bound: 3.0 # weight diff clipping defense
 stddev: 0.002 # for weak_dp defense
-mode_krum: krum # for krum defense
-percentage_server_data: 0.0 # for distillation knowledge
+mode_krum: multi_krum # for krum defense
+percentage_server_data: 0.0 # for distillation knowledge (if used with FedRAD)
 
 # FOR A3FL
 trigger_lr: 0.01
